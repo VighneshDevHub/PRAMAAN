@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  deleteOperation,
   getCertificatesCsvDownloadUrl,
   getCertificateReportPdfUrl,
   listAuditReport,
@@ -169,6 +170,19 @@ export default function ReportCenterPage() {
     runTab();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
+
+  async function handleDeleteOperation(certificateId: string) {
+    if (!window.confirm("Are you sure you want to permanently delete this operation record?")) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await deleteOperation(certificateId);
+      runTab();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to delete operation record");
+      setLoading(false);
+    }
+  }
 
   function downloadCsv() {
     const url = getCertificatesCsvDownloadUrl({
@@ -353,6 +367,7 @@ export default function ReportCenterPage() {
                   ? recList?.items
                   : audList?.items
             }
+            onDelete={(certId) => void handleDeleteOperation(certId)}
           />
         )}
 
@@ -366,9 +381,11 @@ export default function ReportCenterPage() {
 function ReportTable({
   rows,
   loading,
+  onDelete,
 }: {
   rows: ReportCertificateRow[] | undefined;
   loading: boolean;
+  onDelete?: (certificateId: string) => void;
 }) {
   if (loading && !rows) {
     return <div className="p-10 text-center text-sm text-muted">Loading report…</div>;
@@ -388,15 +405,16 @@ function ReportTable({
             <th>Window</th>
             <th>Ledger Seq</th>
             <th>Outcome</th>
-            <th className="text-right">PDF</th>
+            <th className="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.certificate_id}>
-              <td className="font-mono text-[11px] text-govt-blue break-all">
+              <td className="font-mono text-xs font-semibold text-typeblue break-all">
                 {r.certificate_id}
               </td>
+
               <td><span className="fg-badge">{String(r.operation_type).replaceAll("_", " ")}</span></td>
               <td className="text-sm text-main min-w-[200px]">{r.target_description}</td>
               <td className="font-mono text-[11px] text-main">{r.operator}</td>
@@ -409,14 +427,26 @@ function ReportTable({
               </td>
               <td><StatusStamp success={r.success} /></td>
               <td className="text-right">
-                <a
-                  href={getCertificateReportPdfUrl(r.certificate_id)}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="fg-btn-primary !px-2.5 !py-1 text-[11px]"
-                >
-                  PDF ↓
-                </a>
+                <div className="flex items-center justify-end gap-1.5">
+                  <a
+                    href={getCertificateReportPdfUrl(r.certificate_id)}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="fg-btn-primary !px-2.5 !py-1 text-[11px]"
+                  >
+                    PDF ↓
+                  </a>
+                  {onDelete && (
+                    <button
+                      type="button"
+                      onClick={() => onDelete(r.certificate_id)}
+                      className="rounded-md border border-govt-red/30 bg-govt-redLight px-2 py-1 text-[11px] font-medium text-govt-red hover:bg-govt-red hover:text-white transition-colors"
+                      title="Delete operation record"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </td>
             </tr>
           ))}

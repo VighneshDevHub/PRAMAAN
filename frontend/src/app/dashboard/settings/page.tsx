@@ -118,6 +118,44 @@ export default function SettingsPage() {
 
       {isAdmin && settings && (
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* ========================== APPEARANCE & THEME ========================== */}
+          <div className="fg-panel overflow-hidden">
+            <div className="fg-panel-header">
+              <div>
+                <div className="fg-panel-title">Appearance &amp; Visual Theme</div>
+                <p className="mt-0.5 text-xs text-muted">
+                  Select visual theme preference for PRAMAAN console UI.
+                </p>
+              </div>
+            </div>
+            <div className="p-5 flex flex-wrap items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setTheme("govt-light")}
+                className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-semibold transition-all ${
+                  theme === "govt-light"
+                    ? "border-govt-blue bg-govt-blueLight text-govt-navy shadow-sm"
+                    : "border-line bg-panel text-muted hover:text-main"
+                }`}
+              >
+                <span className="h-3.5 w-3.5 rounded-full bg-govt-navy" />
+                Government Light Mode (NIC / NTRO)
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme("dark")}
+                className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-semibold transition-all ${
+                  theme === "dark"
+                    ? "border-govt-blue bg-govt-navy text-white shadow-sm"
+                    : "border-line bg-panel text-muted hover:text-main"
+                }`}
+              >
+                <span className="h-3.5 w-3.5 rounded-full bg-white" />
+                Dark Forensics Mode
+              </button>
+            </div>
+          </div>
+
           {/* ========================== ORGANIZATION ========================== */}
           <div className="fg-panel overflow-hidden">
             <div className="fg-panel-header">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { TimelineEventOut, TimelineEventType } from "@/lib/types";
+import { formatIndianDateTime } from "@/lib/formatters";
 
 const EVENT_ICON: Record<TimelineEventType, string> = {
   DEVICE_CONNECTED: "◉",
@@ -32,9 +33,7 @@ const EVENT_VARIANT: Record<TimelineEventType, string> = {
 };
 
 function formatTs(ts: string): string {
-  const d = new Date(ts);
-  if (Number.isNaN(d.getTime())) return ts;
-  return d.toLocaleString();
+  return formatIndianDateTime(ts);
 }
 
 export function TimelineRail({

@@ -2,15 +2,14 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { getCertificateReportPdfUrl, listAuditReport, UnauthorizedError } from "@/lib/api";
+import { deleteOperation, getCertificateReportPdfUrl, listAuditReport, UnauthorizedError } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import type { ReportCertificateRow } from "@/lib/types";
 import { AppShell } from "@/components/AppShell";
+import { formatIndianDateTime } from "@/lib/formatters";
 
 function formatDate(value: string | null): string {
-  if (!value) return "-";
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleString();
+  return formatIndianDateTime(value);
 }
 
 function outcome(success: boolean): string {
@@ -48,6 +47,19 @@ export default function AuditPage() {
       }
       setError(err instanceof Error ? err.message : "Failed to load audit records");
     } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete(certificateId: string) {
+    if (!window.confirm("Are you sure you want to permanently delete this operation record?")) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await deleteOperation(certificateId);
+      await loadAudit();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete operation record");
       setLoading(false);
     }
   }
@@ -135,7 +147,7 @@ export default function AuditPage() {
                   <th>Completed</th>
                   <th>Ledger</th>
                   <th>Outcome</th>
-                  <th className="text-right">Record</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -149,9 +161,19 @@ export default function AuditPage() {
                     <td className="font-mono text-xs text-main">#{row.ledger_sequence_number}</td>
                     <td><span className={outcome(row.success)}>{row.success ? "Verified" : "Failed"}</span></td>
                     <td className="text-right">
-                      <a href={getCertificateReportPdfUrl(row.certificate_id)} target="_blank" rel="noreferrer noopener" className="fg-btn-primary !px-2.5 !py-1 text-[11px]">
-                        PDF
-                      </a>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <a href={getCertificateReportPdfUrl(row.certificate_id)} target="_blank" rel="noreferrer noopener" className="fg-btn-primary !px-2.5 !py-1 text-[11px]">
+                          PDF
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => void handleDelete(row.certificate_id)}
+                          className="rounded-md border border-govt-red/30 bg-govt-redLight px-2 py-1 text-[11px] font-medium text-govt-red hover:bg-govt-red hover:text-white transition-colors"
+                          title="Delete operation record"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -15,11 +15,10 @@ import type {
 } from "@/lib/types";
 import { AppShell } from "@/components/AppShell";
 import { OperationTypeTag, StatusStamp } from "@/components/OperationBadges";
+import { formatIndianDateTime } from "@/lib/formatters";
 
 function fmt(ts: string): string {
-  const d = new Date(ts);
-  if (Number.isNaN(d.getTime())) return ts;
-  return d.toLocaleString();
+  return formatIndianDateTime(ts);
 }
 
 function shortHash(h: string): string {

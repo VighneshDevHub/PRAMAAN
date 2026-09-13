@@ -12,6 +12,7 @@ import type {
   SystemLogListOut,
 } from "@/lib/types";
 import { AppShell } from "@/components/AppShell";
+import { formatIndianDateTime } from "@/lib/formatters";
 
 type Tab = LogCategory;
 const TABS: { key: Tab; label: string; glyph: string }[] = [
@@ -30,9 +31,7 @@ const LEVEL_BADGE: Record<LogLevel, string> = {
 };
 
 function fmt(ts: string): string {
-  const d = new Date(ts);
-  if (Number.isNaN(d.getTime())) return ts;
-  return d.toLocaleString();
+  return formatIndianDateTime(ts, { includeSeconds: true, style: "short" });
 }
 
 const CAN_VIEW: Record<LogCategory, boolean> = {

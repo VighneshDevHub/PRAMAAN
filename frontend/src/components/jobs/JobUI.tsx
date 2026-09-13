@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { OperationTypeTag } from "@/components/OperationBadges";
 import type { JobOut, TaskStatus } from "@/lib/types";
+import { formatIndianDateTime } from "@/lib/formatters";
 
 export const JOB_STATUS_LABEL: Record<TaskStatus, string> = {
   PENDING: "Pending",
@@ -63,10 +64,7 @@ export const JOB_PAYLOAD_TEMPLATES: Record<string, string> = {
 };
 
 export function formatDateTime(value: string | null | undefined): string {
-  if (!value) return "-";
-  const dt = new Date(value);
-  if (Number.isNaN(dt.getTime())) return value;
-  return dt.toLocaleString();
+  return formatIndianDateTime(value);
 }
 
 export function JobStatusBadge({ status }: { status: TaskStatus }) {
@@ -98,11 +96,13 @@ export function JobRow({
   job,
   onCancel,
   onRetry,
+  onDelete,
   busyAction,
 }: {
   job: JobOut;
   onCancel: (jobId: string) => void;
   onRetry: (jobId: string) => void;
+  onDelete?: (jobId: string) => void;
   busyAction: string | null;
 }) {
   const canCancel = job.status === "PENDING" || job.status === "CLAIMED" || job.status === "RUNNING";
@@ -133,7 +133,7 @@ export function JobRow({
         <div className="font-mono text-[11px] text-muted">{formatDateTime(job.created_at)}</div>
       </td>
       <td>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           <Link href={`/dashboard/jobs/${job.id}`} className="fg-btn !px-2.5 !py-1.5 text-xs">
             View
           </Link>
@@ -155,6 +155,17 @@ export function JobRow({
               className="fg-btn-primary !px-2.5 !py-1.5 text-xs"
             >
               Retry
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              onClick={() => onDelete(job.id)}
+              disabled={busyAction === job.id}
+              className="rounded-md border border-govt-red/30 bg-govt-redLight px-2.5 py-1.5 text-xs font-medium text-govt-red hover:bg-govt-red hover:text-white transition-colors"
+              title="Delete job record"
+            >
+              Delete
             </button>
           )}
         </div>
