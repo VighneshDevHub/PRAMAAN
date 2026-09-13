@@ -54,10 +54,14 @@ app.add_middleware(
 
 @app.exception_handler(HTTPException)
 async def custom_http_exception_handler(request: Request, exc: HTTPException):
-    origin = request.headers.get("origin", "*")
+    origin = request.headers.get("origin")
+    if not origin or origin == "*":
+        origin = "https://pramaan-ntro.vercel.app"
     headers = dict(exc.headers or {})
     headers["Access-Control-Allow-Origin"] = origin
     headers["Access-Control-Allow-Credentials"] = "true"
+    headers["Access-Control-Allow-Headers"] = "*"
+    headers["Access-Control-Allow-Methods"] = "*"
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail},
@@ -67,10 +71,14 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
 
 @app.exception_handler(Exception)
 async def custom_general_exception_handler(request: Request, exc: Exception):
-    origin = request.headers.get("origin", "*")
+    origin = request.headers.get("origin")
+    if not origin or origin == "*":
+        origin = "https://pramaan-ntro.vercel.app"
     headers = {
         "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Methods": "*",
     }
     return JSONResponse(
         status_code=500,
