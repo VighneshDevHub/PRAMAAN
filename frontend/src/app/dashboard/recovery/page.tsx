@@ -8,36 +8,14 @@ import { getToken } from "@/lib/auth";
 import { AppShell } from "@/components/AppShell";
 import type { CaseSummary, DeviceOut, JobCreateIn } from "@/lib/types";
 
-const SCAN_MODES = [
-  { value: "quick", label: "Quick scan", detail: "Fast pass over accessible file structures." },
-  { value: "deep", label: "Deep scan", detail: "Signature carving across the full image." },
-  { value: "deleted", label: "Deleted files", detail: "Prioritise deleted and orphaned entries." },
-  { value: "partition", label: "Partition scan", detail: "Inspect selected partition boundaries." },
-  { value: "custom", label: "Custom scan", detail: "Use the selected evidence profile." },
-] as const;
-
-const FILE_TYPES = ["Documents", "Images", "Videos", "Audio", "Email", "Database"];
-
-function StepRail({ step }: { step: number }) {
-  const labels = ["Device", "Scan", "File types", "Review"];
-  return (
-    <ol className="grid grid-cols-4 gap-2">
-      {labels.map((label, index) => {
-        const number = index + 1;
-        const active = number === step;
-        const complete = number < step;
-        return (
-          <li key={label} className={`border-t-2 pt-2 ${active ? "border-govt-navy" : complete ? "border-govt-green" : "border-line"}`}>
-            <div className={`font-mono text-[10px] uppercase tracking-[0.18em] ${active ? "text-govt-navy" : "text-muted"}`}>
-              0{number}
-            </div>
-            <div className={`mt-1 text-xs ${active ? "font-semibold text-main" : "text-muted"}`}>{label}</div>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
+import {
+  FILE_TYPES,
+  RecoveryReviewTile,
+  RecoveryStepRail,
+  SCAN_MODES,
+  ScanProfileCard,
+  type ScanMode,
+} from "@/components/modules/RecoveryUI";
 
 export default function RecoveryPage() {
   const router = useRouter();
@@ -49,9 +27,10 @@ export default function RecoveryPage() {
   const [imagePath, setImagePath] = useState("D:\\Images\\evidence.dd");
   const [outputDir, setOutputDir] = useState("D:\\RecoveryOutput");
   const [scanMode, setScanMode] = useState<(typeof SCAN_MODES)[number]["value"]>("deep");
-  const [fileTypes, setFileTypes] = useState<string[]>(FILE_TYPES);
+  const [fileTypes, setFileTypes] = useState<string[]>(FILE_TYPES.map((f) => f.id));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (!getToken()) {
@@ -117,70 +96,105 @@ export default function RecoveryPage() {
     >
       {error && <div className="mb-6 rounded-md border border-govt-red/25 bg-govt-redLight px-4 py-3 text-sm text-govt-red">{error}</div>}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr,300px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr,320px]">
         <section className="fg-panel">
           <div className="border-b border-line p-5">
-            <StepRail step={step} />
+            <RecoveryStepRail step={step} />
           </div>
 
           {step === 1 && (
             <div className="space-y-5 p-5">
               <div>
-                <div className="fg-panel-title">Choose evidence source</div>
-                <p className="mt-1 text-sm text-muted">Select an inventory device or work from a forensic image path.</p>
+                <div className="fg-panel-title">Choose Evidence Source</div>
+                <p className="mt-1 text-sm text-muted">Select a registered inventory device or specify an image file path.</p>
               </div>
               <label className="flex flex-col gap-1.5 text-sm">
-                <span className="fg-label">Device</span>
+                <span className="fg-label">Registered Device</span>
                 <select value={deviceId} onChange={(event) => setDeviceId(event.target.value)} className="fg-input">
                   <option value="">No registered device selected</option>
                   {devices.map((device) => <option key={device.id} value={device.id}>{device.serial_number} · {device.model || device.media_type}</option>)}
                 </select>
               </label>
               <div className="grid gap-4 md:grid-cols-2">
-                <label className="flex flex-col gap-1.5 text-sm"><span className="fg-label">Evidence image path</span><input value={imagePath} onChange={(event) => setImagePath(event.target.value)} className="fg-input" /></label>
-                <label className="flex flex-col gap-1.5 text-sm"><span className="fg-label">Recovery output directory</span><input value={outputDir} onChange={(event) => setOutputDir(event.target.value)} className="fg-input" /></label>
+                <label className="flex flex-col gap-1.5 text-sm"><span className="fg-label">Evidence Image Path</span><input value={imagePath} onChange={(event) => setImagePath(event.target.value)} className="fg-input font-mono text-xs" /></label>
+                <label className="flex flex-col gap-1.5 text-sm"><span className="fg-label">Recovery Output Directory</span><input value={outputDir} onChange={(event) => setOutputDir(event.target.value)} className="fg-input font-mono text-xs" /></label>
               </div>
-              <div className="flex justify-end"><button type="button" className="fg-btn-primary" onClick={() => setStep(2)} disabled={!imagePath.trim()}>Continue to scan profile →</button></div>
+              <div className="flex justify-end"><button type="button" className="fg-btn-primary" onClick={() => setStep(2)} disabled={!imagePath.trim()}>Continue to Scan Profile →</button></div>
             </div>
           )}
 
           {step === 2 && (
             <div className="space-y-5 p-5">
-              <div><div className="fg-panel-title">Choose scan profile</div><p className="mt-1 text-sm text-muted">The selected profile is recorded in the job payload for the recovery agent.</p></div>
+              <div><div className="fg-panel-title">Choose Scan Profile</div><p className="mt-1 text-sm text-muted">Select signature carving granularity for the recovery agent.</p></div>
               <div className="grid gap-3 sm:grid-cols-2">
-                {SCAN_MODES.map((mode) => <button key={mode.value} type="button" onClick={() => setScanMode(mode.value)} className={`rounded-md border p-4 text-left ${scanMode === mode.value ? "border-govt-navy bg-govt-blueLight" : "border-line bg-panel hover:bg-field"}`}><div className="font-medium text-main">{mode.label}</div><div className="mt-1 text-xs leading-relaxed text-muted">{mode.detail}</div></button>)}
+                {SCAN_MODES.map((mode) => (
+                  <ScanProfileCard
+                    key={mode.value}
+                    mode={mode}
+                    selected={scanMode === mode.value}
+                    onSelect={() => setScanMode(mode.value)}
+                  />
+                ))}
               </div>
-              <div className="flex justify-between"><button type="button" className="fg-btn" onClick={() => setStep(1)}>← Back</button><button type="button" className="fg-btn-primary" onClick={() => setStep(3)}>Continue to file types →</button></div>
+              <div className="flex justify-between"><button type="button" className="fg-btn" onClick={() => setStep(1)}>← Back</button><button type="button" className="fg-btn-primary" onClick={() => setStep(3)}>Continue to File Types →</button></div>
             </div>
           )}
 
           {step === 3 && (
             <div className="space-y-5 p-5">
-              <div><div className="fg-panel-title">Choose file types</div><p className="mt-1 text-sm text-muted">Limit classification hints while preserving the agent's recovery behavior.</p></div>
+              <div><div className="fg-panel-title">Choose Target File Categories</div><p className="mt-1 text-sm text-muted">Select file classifications to prioritize during analysis.</p></div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {FILE_TYPES.map((type) => <label key={type} className="flex cursor-pointer items-center gap-3 rounded-md border border-line bg-panel p-3 text-sm text-main hover:bg-field"><input type="checkbox" checked={fileTypes.includes(type)} onChange={() => toggleFileType(type)} className="h-4 w-4 accent-govt-navy" />{type}</label>)}
+                {FILE_TYPES.map((item) => {
+                  const selected = fileTypes.includes(item.id);
+                  return (
+                    <label key={item.id} className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 text-sm transition-all ${selected ? "border-govt-blue bg-govt-blueLight/40 dark:bg-govt-blueDark/40" : "border-line bg-panel hover:bg-field"}`}>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl">{item.icon}</span>
+                        <div>
+                          <div className="font-semibold text-main">{item.label}</div>
+                          <div className="text-[11px] text-muted">{item.desc}</div>
+
+                        </div>
+                      </div>
+                      <input type="checkbox" checked={selected} onChange={() => toggleFileType(item.id)} className="h-4 w-4 accent-govt-navy" />
+                    </label>
+                  );
+                })}
               </div>
-              <div className="flex justify-between"><button type="button" className="fg-btn" onClick={() => setStep(2)}>← Back</button><button type="button" className="fg-btn-primary" onClick={() => setStep(4)} disabled={!fileTypes.length}>Review recovery →</button></div>
+              <div className="flex justify-between"><button type="button" className="fg-btn" onClick={() => setStep(2)}>← Back</button><button type="button" className="fg-btn-primary" onClick={() => setStep(4)} disabled={!fileTypes.length}>Review Recovery →</button></div>
             </div>
           )}
 
           {step === 4 && (
             <div className="space-y-5 p-5">
-              <div><div className="fg-panel-title">Review and queue</div><p className="mt-1 text-sm text-muted">Confirm the read-only configuration before creating the recovery job.</p></div>
-              <div className="grid gap-3 md:grid-cols-2">
-                <div className="rounded-md border border-line bg-field p-4"><div className="fg-label">Source</div><div className="mt-1 break-all text-sm text-main">{selectedDevice?.serial_number ?? imagePath}</div></div>
-                <div className="rounded-md border border-line bg-field p-4"><div className="fg-label">Scan</div><div className="mt-1 text-sm text-main">{selectedScan.label}</div></div>
-                <div className="rounded-md border border-line bg-field p-4"><div className="fg-label">File types</div><div className="mt-1 text-sm text-main">{fileTypes.join(", ")}</div></div>
-                <label className="rounded-md border border-line bg-field p-4"><span className="fg-label">Case linkage</span><select value={caseId} onChange={(event) => setCaseId(event.target.value)} className="fg-input mt-2"><option value="">No case selected</option>{cases.map((item) => <option key={item.id} value={item.id}>{item.case_number} · {item.title}</option>)}</select></label>
+              <div><div className="fg-panel-title">Review & Queue Recovery Job</div><p className="mt-1 text-sm text-muted">Confirm configuration parameters before queueing work item.</p></div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <RecoveryReviewTile label="Evidence Source" value={selectedDevice?.serial_number ?? imagePath} hint="Read-only image" icon="💾" />
+                <RecoveryReviewTile label="Scan Profile" value={selectedScan.label} hint={selectedScan.badge} icon={selectedScan.icon} />
+                <RecoveryReviewTile label="Target Categories" value={fileTypes.join(", ")} hint={`${fileTypes.length} selected`} icon="📁" />
+                <div className="rounded-lg border border-line bg-field p-4 shadow-xs">
+                  <div className="fg-label">Case Linkage</div>
+                  <select value={caseId} onChange={(event) => setCaseId(event.target.value)} className="fg-input mt-2">
+                    <option value="">No case selected</option>
+                    {cases.map((item) => <option key={item.id} value={item.id}>{item.case_number} · {item.title}</option>)}
+                  </select>
+                </div>
               </div>
-              <div className="flex justify-between"><button type="button" className="fg-btn" onClick={() => setStep(3)}>← Back</button><button type="button" className="fg-btn-primary" onClick={() => void startRecovery()} disabled={submitting}>{submitting ? "Creating job..." : "Start recovery job"}</button></div>
+              <div className="flex justify-between"><button type="button" className="fg-btn" onClick={() => setStep(3)}>← Back</button><button type="button" className="fg-btn-primary" onClick={() => void startRecovery()} disabled={submitting}>{submitting ? "Creating Job..." : "Start Recovery Job"}</button></div>
             </div>
           )}
         </section>
 
         <aside className="space-y-4">
-          <div className="fg-panel p-5"><div className="fg-label">Workflow status</div><div className="mt-2 font-display text-xl font-semibold text-main">{step < 4 ? `Configuration ${step}/3` : "Ready to queue"}</div><p className="mt-2 text-sm leading-relaxed text-muted">After submission, the existing agent workflow handles claiming, progress, evidence output, certificate creation, and ledger anchoring.</p></div>
-          <div className="fg-panel p-5"><div className="fg-label">Safety boundary</div><p className="mt-2 text-sm leading-relaxed text-muted">This screen creates a job only. It does not execute recovery directly or modify the source evidence.</p></div>
+          <div className="fg-panel p-5">
+            <div className="fg-label">Workflow Status</div>
+            <div className="mt-2 font-display text-xl font-semibold text-main">{step < 4 ? `Configuration ${step}/3` : "Ready to Queue"}</div>
+            <p className="mt-2 text-xs leading-relaxed text-muted">After submission, the recovery worker agent claims the job, executes byte carving, generates the recovery report, and anchors the output to the blockchain ledger.</p>
+          </div>
+          <div className="fg-panel p-5">
+            <div className="fg-label">Safety & Read-Only Guarantee</div>
+            <p className="mt-2 text-xs leading-relaxed text-muted">Evidence images are analyzed in read-only mode with SHA-256 hash preservation. Source drives are never mutated.</p>
+          </div>
         </aside>
       </div>
     </AppShell>
