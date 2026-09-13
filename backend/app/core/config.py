@@ -40,6 +40,25 @@ class Settings(BaseSettings):
             origins += [o.strip() for o in self.EXTRA_CORS_ORIGINS.split(",") if o.strip()]
         return origins
 
+    @field_validator("DATABASE_URL")
+    @classmethod
+    def _normalize_database_url(cls, v: str) -> str:
+        """Strip quotes/whitespace and normalize postgres:// or postgresql://
+        to postgresql+asyncpg:// so cloud deployments (Render, Supabase, Neon)
+        work seamlessly with async SQLAlchemy."""
+        if not v:
+            return "sqlite+aiosqlite:///./forensicguard.db"
+        clean = v.strip().strip('"').strip("'")
+        if "channel_binding=" in clean:
+            import re
+            clean = re.sub(r"[&?]channel_binding=[^&]*", "", clean)
+        if clean.startswith("postgres://"):
+            return "postgresql+asyncpg://" + clean[11:]
+        if clean.startswith("postgresql://"):
+            return "postgresql+asyncpg://" + clean[13:]
+        return clean
+
+
     @field_validator("SIGNING_PRIVATE_KEY_PEM", "SIGNING_PUBLIC_KEY_PEM")
     @classmethod
     def _unescape_pem_newlines(cls, v: str | None) -> str | None:
@@ -53,3 +72,4 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
