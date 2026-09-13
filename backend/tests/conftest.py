@@ -1,6 +1,7 @@
 import os
 
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///./test_forensicguard.db"
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///./test_pramaan.db"
+
 
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport

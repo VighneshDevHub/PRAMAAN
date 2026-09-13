@@ -131,7 +131,8 @@ def run(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="ForensicGuard Drive Eraser agent")
+    parser = argparse.ArgumentParser(description="PRAMAAN Drive Eraser agent")
+
     parser.add_argument("--target", required=True, help="Path to file or device to wipe")
     parser.add_argument("--api-url", default="http://localhost:8000", help="Backend base URL")
     parser.add_argument(

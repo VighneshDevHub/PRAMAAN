@@ -5,15 +5,15 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-forensicguard}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-forensicguard_dev_password}
-      POSTGRES_DB: ${POSTGRES_DB:-forensicguard}
+      POSTGRES_USER: ${POSTGRES_USER:-pramaan}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pramaan_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-pramaan}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-forensicguard}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pramaan}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -24,7 +24,8 @@ services:
     restart: unless-stopped
     environment:
       ENVIRONMENT: production
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-forensicguard}:${POSTGRES_PASSWORD:-forensicguard_dev_password}@postgres:5432/${POSTGRES_DB:-forensicguard}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-pramaan}:${POSTGRES_PASSWORD:-pramaan_dev_password}@postgres:5432/${POSTGRES_DB:-pramaan}
+
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:?Set JWT_SECRET_KEY in your .env before running compose}
       JWT_ALGORITHM: HS256
       JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 30

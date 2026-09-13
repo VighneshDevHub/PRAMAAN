@@ -50,7 +50,8 @@ def run(image_path: str, output_dir: str, api_url: str, email: str, password: st
 
 
 def main():
-    parser = argparse.ArgumentParser(description="ForensicGuard Recovery Engine")
+    parser = argparse.ArgumentParser(description="PRAMAAN Recovery Engine")
+
     parser.add_argument("--image", required=True, help="Path to the evidence image (read-only)")
     parser.add_argument("--output-dir", required=True, help="Where to write recovered files")
     parser.add_argument("--api-url", default="http://localhost:8000")

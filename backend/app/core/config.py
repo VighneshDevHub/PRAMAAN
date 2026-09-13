@@ -10,12 +10,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    APP_NAME: str = "ForensicGuard API"
+    APP_NAME: str = "PRAMAAN API"
     ENVIRONMENT: str = "development"
 
     # Dev default: local SQLite, zero setup. Production: swap to
     # postgresql+asyncpg://user:pass@host:5432/dbname — no code changes needed.
-    DATABASE_URL: str = "sqlite+aiosqlite:///./forensicguard.db"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./pramaan.db"
+
 
     JWT_SECRET_KEY: str = "change-me-in-production-use-a-real-secret"
     JWT_ALGORITHM: str = "HS256"
@@ -44,19 +45,23 @@ class Settings(BaseSettings):
     @classmethod
     def _normalize_database_url(cls, v: str) -> str:
         """Strip quotes/whitespace and normalize postgres:// or postgresql://
-        to postgresql+asyncpg:// so cloud deployments (Render, Supabase, Neon)
-        work seamlessly with async SQLAlchemy."""
+        to postgresql+asyncpg://, replace sslmode= with ssl= for asyncpg,
+        and strip unsupported query params like channel_binding."""
         if not v:
             return "sqlite+aiosqlite:///./forensicguard.db"
         clean = v.strip().strip('"').strip("'")
+        import re
+        if "sslmode=" in clean:
+            clean = re.sub(r"([?&])sslmode=([^&]*)", r"\1ssl=\2", clean)
         if "channel_binding=" in clean:
-            import re
             clean = re.sub(r"[&?]channel_binding=[^&]*", "", clean)
+        clean = re.sub(r"[?&]$", "", clean)
         if clean.startswith("postgres://"):
             return "postgresql+asyncpg://" + clean[11:]
         if clean.startswith("postgresql://"):
             return "postgresql+asyncpg://" + clean[13:]
         return clean
+
 
 
     @field_validator("SIGNING_PRIVATE_KEY_PEM", "SIGNING_PUBLIC_KEY_PEM")

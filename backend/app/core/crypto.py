@@ -116,9 +116,10 @@ def get_or_create_dev_keypair() -> tuple[str, str]:
         pass
 
     print(
-        f"\n[forensicguard] Generated a NEW signing keypair and saved it to "
+        f"\n[pramaan] Generated a NEW signing keypair and saved it to "
         f"{keys_dir}/ — this key will now persist across restarts. "
         f"For production, override via SIGNING_PRIVATE_KEY_PEM / "
         f"SIGNING_PUBLIC_KEY_PEM env vars pointing to a real secrets manager.\n"
     )
+
     return private_pem, public_pem

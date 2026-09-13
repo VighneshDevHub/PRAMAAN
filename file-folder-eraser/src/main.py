@@ -62,7 +62,8 @@ def run(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="ForensicGuard File & Folder Eraser")
+    parser = argparse.ArgumentParser(description="PRAMAAN File & Folder Eraser")
+
     parser.add_argument("--targets", nargs="+", required=True, help="Files/folders to securely delete")
     parser.add_argument("--api-url", default="http://localhost:8000")
     parser.add_argument("--no-freespace-overwrite", action="store_true")

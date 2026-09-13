@@ -1,28 +1,30 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-const TOKEN_KEY = "forensicguard_token";
-const EMAIL_KEY = "forensicguard_email";
-const ROLE_KEY = "forensicguard_role";
-const USER_ID_KEY = "forensicguard_user_id";
+const TOKEN_KEY = "pramaan_token";
+
+const EMAIL_KEY = "pramaan_email";
+const ROLE_KEY = "pramaan_role";
+const USER_ID_KEY = "pramaan_user_id";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY) ?? localStorage.getItem("forensicguard_token");
 }
 
 export function getStoredEmail(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(EMAIL_KEY);
+  return localStorage.getItem(EMAIL_KEY) ?? localStorage.getItem("forensicguard_email");
 }
 
 export function getStoredRole(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(ROLE_KEY);
+  return localStorage.getItem(ROLE_KEY) ?? localStorage.getItem("forensicguard_role");
 }
 
 export function getStoredUserId(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(USER_ID_KEY);
+  return localStorage.getItem(USER_ID_KEY) ?? localStorage.getItem("forensicguard_user_id");
 }
+
 
 function setSession(
   token: string,
