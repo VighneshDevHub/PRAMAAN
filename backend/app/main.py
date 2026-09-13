@@ -37,6 +37,9 @@ async def lifespan(app: FastAPI):
     await system_log_buffer.stop()
 
 
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
+
 app = FastAPI(title=settings.APP_NAME, version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
@@ -47,6 +50,33 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(HTTPException)
+async def custom_http_exception_handler(request: Request, exc: HTTPException):
+    origin = request.headers.get("origin", "*")
+    headers = dict(exc.headers or {})
+    headers["Access-Control-Allow-Origin"] = origin
+    headers["Access-Control-Allow-Credentials"] = "true"
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+        headers=headers,
+    )
+
+
+@app.exception_handler(Exception)
+async def custom_general_exception_handler(request: Request, exc: Exception):
+    origin = request.headers.get("origin", "*")
+    headers = {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Credentials": "true",
+    }
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"},
+        headers=headers,
+    )
 
 app.include_router(operations.router, prefix="/api/v1")
 app.include_router(verify.router, prefix="/api/v1")

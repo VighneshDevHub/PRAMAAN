@@ -13,6 +13,8 @@ from app.services import ledger_service, notification_service
 router = APIRouter(prefix="/verify", tags=["verify"])
 
 
+from sqlalchemy import or_, select
+
 @router.get("/{certificate_id}", response_model=VerificationResult)
 async def verify_operation(
     certificate_id: str,
@@ -26,8 +28,13 @@ async def verify_operation(
 
     result = await db.execute(
         select(OperationRecord, LedgerEntry)
-        .join(LedgerEntry, LedgerEntry.operation_record_id == OperationRecord.id)
-        .where(OperationRecord.certificate_id == certificate_id)
+        .outerjoin(LedgerEntry, LedgerEntry.operation_record_id == OperationRecord.id)
+        .where(
+            or_(
+                OperationRecord.certificate_id == certificate_id,
+                OperationRecord.id == certificate_id,
+            )
+        )
     )
     row = result.first()
     if row is None:
@@ -38,11 +45,20 @@ async def verify_operation(
     signature_valid = verify_signature(
         record.to_signable_dict(), record.signature, public_key_pem
     )
-    chain_result = await ledger_service.verify_chain_integrity(
-        db, up_to_sequence=ledger_entry.sequence_number
-    )
 
-    overall = signature_valid and chain_result.valid
+    if ledger_entry is not None:
+        chain_result = await ledger_service.verify_chain_integrity(
+            db, up_to_sequence=ledger_entry.sequence_number
+        )
+        chain_intact = chain_result.valid
+        broken_seq = chain_result.broken_at_sequence
+        chain_reason = chain_result.reason
+    else:
+        chain_intact = False
+        broken_seq = None
+        chain_reason = "No ledger entry recorded for this operation"
+
+    overall = signature_valid and chain_intact
 
     if overall:
         detail = "Record is authentic and has not been tampered with."
@@ -50,20 +66,23 @@ async def verify_operation(
         detail = "Signature mismatch — this record's data does not match its original signature."
     else:
         detail = (
-            f"Ledger chain broken at sequence {chain_result.broken_at_sequence}: "
-            f"{chain_result.reason}"
+            f"Ledger chain broken at sequence {broken_seq}: "
+            f"{chain_reason}"
         )
 
     if not overall:
-        await notification_service.notify_tamper_detected_broadcast(
-            db,
-            detail_str=detail,
-        )
+        try:
+            await notification_service.notify_tamper_detected_broadcast(
+                db,
+                detail_str=detail,
+            )
+        except Exception:
+            pass
 
     return VerificationResult(
         certificate_id=certificate_id,
         signature_valid=signature_valid,
-        chain_intact=chain_result.valid,
+        chain_intact=chain_intact,
         overall_verified=overall,
         detail=detail,
     )
