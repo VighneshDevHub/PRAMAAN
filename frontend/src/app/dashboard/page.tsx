@@ -10,6 +10,7 @@ import {
   UnauthorizedError,
 } from "@/lib/api";
 import { getToken } from "@/lib/auth";
+import { formatIndianDateTime } from "@/lib/formatters";
 import { AppShell } from "@/components/AppShell";
 import type {
   AnalyticsSummary,
@@ -50,36 +51,46 @@ function statusBadge(s: TaskStatus): { label: string; cls: string } {
   }
 }
 
-// ---- Stat cards ------------------------------------------------------------
+// ---- Stat cards with SVG icons ---------------------------------------------
 
 type StatCardDef = {
   label: string;
   value: string;
   hint?: string;
   accent: "navy" | "green" | "red" | "gold" | "blue";
+  icon: React.ReactNode;
 };
 
-const ACCENT_HEADER: Record<StatCardDef["accent"], string> = {
-  navy: "bg-govt-navy text-white",
-  green: "bg-govt-green text-white",
-  red: "bg-govt-red text-white",
-  gold: "bg-govt-goldDark text-white",
-  blue: "bg-govt-blue text-white",
+const ACCENT_STYLES: Record<StatCardDef["accent"], { border: string; bg: string; iconBg: string; text: string }> = {
+  navy: { border: "border-govt-navy/30", bg: "bg-white", iconBg: "bg-govt-navy/10 text-govt-navy", text: "text-govt-navy" },
+  blue: { border: "border-govt-blue/30", bg: "bg-white", iconBg: "bg-govt-blueLight text-govt-blue", text: "text-govt-blue" },
+  green: { border: "border-govt-green/30", bg: "bg-white", iconBg: "bg-govt-greenLight text-govt-green", text: "text-govt-green" },
+  gold: { border: "border-govt-gold/40", bg: "bg-white", iconBg: "bg-govt-goldLight text-govt-goldDark", text: "text-govt-goldDark" },
+  red: { border: "border-govt-red/30", bg: "bg-white", iconBg: "bg-govt-redLight text-govt-red", text: "text-govt-red" },
 };
 
 function StatCard({ card }: { card: StatCardDef }) {
+  const style = ACCENT_STYLES[card.accent];
   return (
-    <div className="fg-panel overflow-hidden transition-all hover:shadow-md">
-      <div className={`px-5 py-2 font-mono text-[10px] uppercase tracking-[0.2em] ${ACCENT_HEADER[card.accent]}`}>
-        {card.label}
-      </div>
-      <div className="px-5 py-4">
-        <div className="font-display text-3xl font-semibold tracking-tight text-main">
-          {card.value}
+    <div className={`fg-panel overflow-hidden transition-all hover:shadow-md border ${style.border}`}>
+      <div className="p-5 flex items-start justify-between gap-3">
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted font-semibold">
+            {card.label}
+          </div>
+          <div className={`mt-2 font-display text-3xl font-bold tracking-tight ${style.text} tabular-nums`}>
+            {card.value}
+          </div>
+          {card.hint && (
+            <div className="mt-1 text-xs text-muted flex items-center gap-1 font-mono">
+              <span className="h-1 w-1 rounded-full bg-slate-400" />
+              <span>{card.hint}</span>
+            </div>
+          )}
         </div>
-        {card.hint && (
-          <div className="mt-1 text-xs text-muted">{card.hint}</div>
-        )}
+        <div className={`shrink-0 p-3 rounded-lg ${style.iconBg}`}>
+          {card.icon}
+        </div>
       </div>
     </div>
   );
@@ -92,8 +103,13 @@ function TopInvestigators({ items }: { items: TopInvestigator[] }) {
   return (
     <div className="fg-panel h-full flex flex-col justify-between">
       <div className="fg-panel-header">
-        <div className="fg-panel-title">Top Investigators</div>
-        <div className="text-xs text-muted">By operations completed</div>
+        <div className="flex items-center gap-2">
+          <svg className="w-4 h-4 text-govt-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <div className="fg-panel-title">Top Investigators</div>
+        </div>
+        <div className="text-xs text-muted">Operations Completed</div>
       </div>
       <div className="divide-y divide-line flex-1">
         {items.length === 0 ? (
@@ -104,25 +120,25 @@ function TopInvestigators({ items }: { items: TopInvestigator[] }) {
           items.map((inv, idx) => (
             <div
               key={inv.email}
-              className="grid grid-cols-[minmax(0,1fr)_60px] items-center gap-3 px-5 py-3"
+              className="grid grid-cols-[minmax(0,1fr)_60px] items-center gap-3 px-5 py-3.5 hover:bg-field/50 transition-colors"
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-govt-blueLight text-[10px] font-bold text-govt-navy">
-                    {idx + 1}
+                  <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded bg-govt-navy text-[10px] font-bold text-white font-mono">
+                    #{idx + 1}
                   </span>
-                  <div className="truncate font-mono text-xs text-main">
+                  <div className="truncate font-mono text-xs text-main font-medium">
                     {inv.email}
                   </div>
                 </div>
-                <div className="mt-1.5 fg-progress-track h-1.5">
+                <div className="mt-2 fg-progress-track h-1.5 rounded-full overflow-hidden">
                   <div
-                    className="fg-progress-fill"
+                    className="fg-progress-fill bg-gradient-to-r from-govt-navy to-govt-blue"
                     style={{ width: `${(inv.count / max) * 100}%` }}
                   />
                 </div>
               </div>
-              <div className="text-right font-mono text-sm text-main font-semibold">
+              <div className="text-right font-mono text-sm text-govt-navy font-bold">
                 {inv.count}
               </div>
             </div>
@@ -160,8 +176,13 @@ function RecentJobsList({ jobs: initialJobs }: { jobs: JobOut[] }) {
   return (
     <div className="fg-panel">
       <div className="fg-panel-header">
-        <div className="fg-panel-title">Recent Jobs & Live Activity Queue</div>
-        <Link href="/dashboard/jobs" className="text-xs font-medium text-govt-blue hover:underline flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          <svg className="w-4 h-4 text-govt-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <div className="fg-panel-title">Recent Jobs & Live Activity Queue</div>
+        </div>
+        <Link href="/dashboard/jobs" className="text-xs font-semibold text-govt-blue hover:underline flex items-center gap-1">
           View all jobs →
         </Link>
       </div>
@@ -183,24 +204,24 @@ function RecentJobsList({ jobs: initialJobs }: { jobs: JobOut[] }) {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className={`${badge.cls}`}>{badge.label}</span>
-                      <span className="truncate font-mono text-[11px] text-muted">
+                      <span className="truncate font-mono text-[11px] text-muted font-medium">
                         {j.job_number}
                       </span>
                     </div>
-                    <div className="mt-1 truncate text-sm font-medium text-main">
+                    <div className="mt-1 truncate text-sm font-semibold text-main">
                       {j.title || `${j.operation_type} job`}
                     </div>
                     <div className="mt-1 line-clamp-1 font-mono text-[11px] text-muted">
-                      {j.stage || j.message || new Date(j.created_at).toISOString()}
+                      {j.stage || j.message || formatIndianDateTime(j.created_at)}
                     </div>
                   </div>
                   <div className="w-36 shrink-0 text-right">
-                    <div className="font-mono text-xs font-semibold text-main">
+                    <div className="font-mono text-xs font-bold text-govt-navy">
                       {j.progress_percent}%
                     </div>
                     <div className="mt-1.5 fg-progress-track h-2 rounded-xs overflow-hidden">
                       <div
-                        className="fg-progress-fill transition-all duration-300"
+                        className="fg-progress-fill bg-govt-navy transition-all duration-300"
                         style={{ width: `${j.progress_percent}%` }}
                       />
                     </div>
@@ -224,6 +245,7 @@ type ModuleCardProps = {
   action: string;
   jobs: JobOut[];
   capabilities: string[];
+  icon: React.ReactNode;
 };
 
 function ModuleCard({
@@ -235,6 +257,7 @@ function ModuleCard({
   action,
   jobs,
   capabilities,
+  icon,
 }: ModuleCardProps) {
   const activeJobs = jobs.filter(
     (job) => job.status === "PENDING" || job.status === "CLAIMED" || job.status === "RUNNING",
@@ -242,38 +265,43 @@ function ModuleCard({
   const completedJobs = jobs.filter((job) => job.status === "COMPLETED").length;
 
   return (
-    <article className="fg-panel flex h-full flex-col overflow-hidden transition-all hover:border-govt-navy/40">
+    <article className="fg-panel flex h-full flex-col overflow-hidden transition-all hover:border-govt-navy/40 hover:shadow-md">
       <div className={`h-1.5 ${accent}`} />
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted">{code}</div>
-            <h3 className="mt-2 font-display text-xl font-semibold text-main">{title}</h3>
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-lg bg-field border border-line text-govt-navy">
+              {icon}
+            </div>
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted font-semibold">{code}</div>
+              <h3 className="mt-0.5 font-display text-xl font-bold text-main">{title}</h3>
+            </div>
           </div>
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-sm border border-line bg-field font-mono text-xs text-muted">
-            {String(activeJobs).padStart(2, "0")}
+          <span className="inline-flex h-8 px-2.5 items-center justify-center rounded bg-govt-blueLight font-mono text-xs font-bold text-govt-navy">
+            {activeJobs > 0 ? `${activeJobs} Active` : "Idle"}
           </span>
         </div>
-        <p className="mt-3 min-h-[3.5rem] text-sm leading-relaxed text-muted">{description}</p>
-        <div className="mt-5 grid grid-cols-2 gap-2 border-y border-line py-3">
+        <p className="mt-3 min-h-[3.2rem] text-sm leading-relaxed text-muted">{description}</p>
+        <div className="mt-4 grid grid-cols-2 gap-2 border-y border-line py-3">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Active</div>
-            <div className="mt-1 font-display text-lg font-semibold text-main">{activeJobs}</div>
+            <div className="font-mono text-[10px] uppercase tracking-wider text-muted font-medium">Active Jobs</div>
+            <div className="mt-1 font-display text-lg font-bold text-govt-navy">{activeJobs}</div>
           </div>
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Completed</div>
-            <div className="mt-1 font-display text-lg font-semibold text-main">{completedJobs}</div>
+            <div className="font-mono text-[10px] uppercase tracking-wider text-muted font-medium">Completed</div>
+            <div className="mt-1 font-display text-lg font-bold text-govt-green">{completedJobs}</div>
           </div>
         </div>
         <ul className="mt-4 grid gap-2 text-xs text-muted sm:grid-cols-2">
           {capabilities.map((capability) => (
             <li key={capability} className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-govt-gold" />
-              {capability}
+              <span>{capability}</span>
             </li>
           ))}
         </ul>
-        <Link href={href} className="fg-btn-primary mt-6 w-full justify-center">
+        <Link href={href} className="fg-btn-primary mt-6 w-full justify-center text-xs font-bold !py-2.5">
           {action} <span aria-hidden>→</span>
         </Link>
       </div>
@@ -320,49 +348,60 @@ export default function DashboardHome() {
     const s = summary;
     if (!s) {
       return [
-        { label: "Recovered files", value: "—", accent: "navy" },
-        { label: "Recovered data", value: "—", accent: "blue" },
-        { label: "Today's operations", value: "—", accent: "gold" },
-        { label: "Total devices", value: "—", accent: "navy" },
-        { label: "Success rate", value: "—", accent: "green" },
-        { label: "Failure rate", value: "—", accent: "red" },
-        { label: "Storage sanitized", value: "—", accent: "navy" },
+        { label: "Recovered files", value: "—", accent: "navy", icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> },
+        { label: "Recovered data", value: "—", accent: "blue", icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg> },
+        { label: "Today's operations", value: "—", accent: "gold", icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> },
+        { label: "Total devices", value: "—", accent: "navy", icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> },
+        { label: "Success rate", value: "—", accent: "green", icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+        { label: "Failure rate", value: "—", accent: "red", icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+        { label: "Storage sanitized", value: "—", accent: "navy", icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg> },
       ];
     }
     return [
-      { label: "Recovered files", value: s.recovered_files_count.toLocaleString(), accent: "navy" },
+      {
+        label: "Recovered files",
+        value: s.recovered_files_count.toLocaleString(),
+        accent: "navy",
+        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+      },
       {
         label: "Recovered data",
         value: bytesHuman(s.recovered_data_size_bytes),
         accent: "blue",
+        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg>,
       },
       {
         label: "Today's operations",
         value: s.operations_today_count.toLocaleString(),
         hint: "UTC day boundary",
         accent: "gold",
+        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
       },
       {
         label: "Total devices",
         value: s.devices_total.toLocaleString(),
         hint: "Inventory tracked",
         accent: "navy",
+        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
       },
       {
         label: "Success rate",
         value: pct(s.success_rate_pct),
         accent: "green",
+        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
       },
       {
         label: "Failure rate",
         value: pct(s.failure_rate_pct),
         accent: "red",
+        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
       },
       {
         label: "Storage sanitized",
         value: bytesHuman(s.storage_sanitized_bytes),
         hint: "Drive erase modules",
         accent: "navy",
+        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
       },
     ];
   }, [summary]);
@@ -373,6 +412,44 @@ export default function DashboardHome() {
       title="Dashboard"
       subtitle="Platform operations telemetry, interactive analytical distributions, cryptographic ledger health, and task queue monitoring."
     >
+      {/* Top Banner / Quick Action Command Bar */}
+      <div className="mb-6 rounded-xl border border-govt-navy/20 bg-gradient-to-r from-[#051329] via-[#0B2D4D] to-[#07172B] p-5 text-white shadow-lg flex flex-wrap items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-xs font-mono text-govt-gold font-bold uppercase tracking-wider">
+            <span className="h-2 w-2 rounded-full bg-govt-green animate-pulse" />
+            <span>NIST SP 800-88 REV. 1 COMPLIANT · LIVE SYSTEM OPERATIONAL</span>
+          </div>
+          <h2 className="text-xl font-bold font-display text-white">
+            National Technical Research Organisation (NTRO) Forensics Hub
+          </h2>
+          <p className="text-xs text-white/75">
+            Tamper-resistant storage sanitization, file recovery engine, and SHA-256 hash-chain verification.
+          </p>
+        </div>
+
+        {/* Quick Launch Buttons */}
+        <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+          <Link
+            href="/dashboard/cases/new"
+            className="px-3.5 py-2 rounded-lg bg-govt-gold hover:bg-yellow-500 text-govt-navy font-bold transition-all shadow-sm flex items-center gap-1.5"
+          >
+            <span>+ New Case</span>
+          </Link>
+          <Link
+            href="/dashboard/drive-eraser"
+            className="px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all flex items-center gap-1.5"
+          >
+            <span>+ Drive Eraser</span>
+          </Link>
+          <Link
+            href="/dashboard/recovery"
+            className="px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all flex items-center gap-1.5"
+          >
+            <span>+ Recovery</span>
+          </Link>
+        </div>
+      </div>
+
       {err && (
         <div className="mb-6 rounded-md border border-govt-red/30 bg-govt-redLight px-4 py-3 text-sm text-govt-red">
           {err}
@@ -384,7 +461,7 @@ export default function DashboardHome() {
         <h2 id="stats-heading" className="sr-only">
           Key statistics
         </h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {statCards.map((c) => (
             <StatCard key={c.label} card={c} />
           ))}
@@ -420,12 +497,12 @@ export default function DashboardHome() {
       <section aria-labelledby="modules-heading" className="mb-6">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted">Choose Module</div>
-            <h2 id="modules-heading" className="mt-1 font-display text-2xl font-semibold text-main">
-              Forensic operations
+            <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted font-semibold">Choose Module</div>
+            <h2 id="modules-heading" className="mt-1 font-display text-2xl font-bold text-main">
+              Forensic Operations Center
             </h2>
           </div>
-          <Link href="/dashboard/jobs" className="text-xs font-medium text-govt-blue hover:underline">
+          <Link href="/dashboard/jobs" className="text-xs font-semibold text-govt-blue hover:underline">
             Open job queue →
           </Link>
         </div>
@@ -439,6 +516,7 @@ export default function DashboardHome() {
             action="Start recovery job"
             jobs={jobs.filter((job) => job.operation_type === "RECOVERY")}
             capabilities={["Quick or deep scan", "Evidence integrity"]}
+            icon={<svg className="w-5 h-5 text-typeviolet" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
           />
           <ModuleCard
             code="02 / FILE ERASE"
@@ -449,6 +527,7 @@ export default function DashboardHome() {
             action="Start erase job"
             jobs={jobs.filter((job) => job.operation_type === "FILE_ERASE")}
             capabilities={["N-pass overwrite", "Free-space cleanse"]}
+            icon={<svg className="w-5 h-5 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>}
           />
           <ModuleCard
             code="03 / DRIVE ERASE"
@@ -459,6 +538,7 @@ export default function DashboardHome() {
             action="Start drive wipe"
             jobs={jobs.filter((job) => job.operation_type === "DRIVE_ERASE")}
             capabilities={["Clear, purge, crypto", "Read-back verify"]}
+            icon={<svg className="w-5 h-5 text-typeblue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
           />
         </div>
       </section>

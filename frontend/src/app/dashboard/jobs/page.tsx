@@ -7,6 +7,7 @@ import {
   cancelJob,
   ConflictError,
   createJob,
+  deleteJob,
   listCases,
   listDevices,
   listJobs,
@@ -172,6 +173,24 @@ export default function JobsPage() {
             ? err.message
             : "Failed to retry job.";
       setNotice({ tone: "error", text });
+    } finally {
+      setBusyJobId(null);
+    }
+  }
+
+  async function handleDelete(jobId: string) {
+    if (!window.confirm("Are you sure you want to permanently delete this job record?")) return;
+    setBusyJobId(jobId);
+    setNotice(null);
+    try {
+      await deleteJob(jobId);
+      setNotice({ tone: "success", text: "Job record permanently deleted." });
+      await loadData(selectedStatus);
+    } catch (err) {
+      setNotice({
+        tone: "error",
+        text: err instanceof Error ? err.message : "Failed to delete job.",
+      });
     } finally {
       setBusyJobId(null);
     }
@@ -397,6 +416,7 @@ export default function JobsPage() {
                     job={job}
                     onCancel={(jobId) => void handleCancel(jobId)}
                     onRetry={(jobId) => void handleRetry(jobId)}
+                    onDelete={(jobId) => void handleDelete(jobId)}
                     busyAction={busyJobId}
                   />
                 ))}

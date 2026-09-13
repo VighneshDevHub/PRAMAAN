@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
   cancelJob,
   ConflictError,
+  deleteJob,
   getJob,
   retryJob,
   UnauthorizedError,
@@ -182,6 +183,23 @@ export default function JobDetailPage() {
     }
   }
 
+  async function handleDelete() {
+    if (!job) return;
+    if (!window.confirm("Are you sure you want to permanently delete this job record?")) return;
+    setBusy(true);
+    setNotice(null);
+    try {
+      await deleteJob(job.id);
+      router.push("/dashboard/jobs");
+    } catch (err) {
+      setNotice({
+        tone: "error",
+        text: err instanceof Error ? err.message : "Failed to delete job.",
+      });
+      setBusy(false);
+    }
+  }
+
   const canCancel = job && (job.status === "PENDING" || job.status === "CLAIMED" || job.status === "RUNNING");
   const canRetry = job && (job.status === "FAILED" || job.status === "CANCELLED");
 
@@ -203,6 +221,16 @@ export default function JobDetailPage() {
           {canRetry && (
             <button type="button" onClick={() => void handleRetry()} disabled={busy} className="fg-btn-primary">
               Retry Job
+            </button>
+          )}
+          {job && (
+            <button
+              type="button"
+              onClick={() => void handleDelete()}
+              disabled={busy}
+              className="rounded-md border border-govt-red/30 bg-govt-redLight px-3 py-1.5 text-xs font-medium text-govt-red hover:bg-govt-red hover:text-white transition-colors"
+            >
+              Delete Job
             </button>
           )}
         </div>
