@@ -154,7 +154,8 @@ def generate_operation_pdf(record: dict, session=None) -> bytes:
     """Generates an official forensic report / sanitization certificate PDF."""
     operation_type = record["operation_type"]
     title = TITLES.get(operation_type, "OPERATION REPORT")
-    verify_url = f"{settings.PUBLIC_BASE_URL}/verify/{record['certificate_id']}"
+    base_url = settings.PUBLIC_BASE_URL.rstrip("/")
+    verify_url = f"{base_url}/verify/{record['certificate_id']}"
     qr_buffer = _build_qr_image(verify_url)
 
     header_subtitle = "Issued by PRAMAAN — NIST SP 800-88 Compliant Digital Forensics Platform"

@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     SIGNING_PRIVATE_KEY_PEM: str | None = None
     SIGNING_PUBLIC_KEY_PEM: str | None = None
 
-    PUBLIC_BASE_URL: str = "http://localhost:3000"
+    PUBLIC_BASE_URL: str = "https://pramaan-ntro.vercel.app"
 
     # Additional CORS origins beyond PUBLIC_BASE_URL — comma-separated.
     # Example: "https://pramaan.ntro.gov.in,https://www.pramaan.ntro.gov.in"
