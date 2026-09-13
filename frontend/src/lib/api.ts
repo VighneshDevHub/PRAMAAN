@@ -135,6 +135,13 @@ export function getOperationPdfUrl(certificateId: string): string {
   return `${API_BASE_URL}/api/v1/operations/${certificateId}/pdf`;
 }
 
+export async function deleteOperation(certificateId: string): Promise<void> {
+  return fetchJson<void>(`/api/v1/operations/${certificateId}`, {
+    method: "DELETE",
+    requireAuth: true,
+  });
+}
+
 export async function listCases(): Promise<CaseSummary[]> {
   return fetchJson<CaseSummary[]>(`/api/v1/cases`, { requireAuth: true });
 }
@@ -337,6 +344,13 @@ export async function cancelJob(jobId: string): Promise<JobOut> {
 export async function retryJob(jobId: string): Promise<JobOut> {
   return fetchJson<JobOut>(`/api/v1/jobs/${jobId}/retry`, {
     method: "POST",
+    requireAuth: true,
+  });
+}
+
+export async function deleteJob(jobId: string): Promise<void> {
+  return fetchJson<void>(`/api/v1/jobs/${jobId}`, {
+    method: "DELETE",
     requireAuth: true,
   });
 }
