@@ -8,7 +8,7 @@ from app.models.notifications import Notification, NotificationType
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 async def create_notification(
