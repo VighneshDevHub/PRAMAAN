@@ -41,10 +41,8 @@ app = FastAPI(title=settings.APP_NAME, version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    # In development OR when PUBLIC_BASE_URL is not set → allow all origins.
-    # In production set PUBLIC_BASE_URL to the Railway frontend URL and
-    # EXTRA_CORS_ORIGINS to any additional allowed origins (comma-separated).
-    allow_origins=["*"] if settings.ENVIRONMENT == "development" else settings.allowed_origins,
+    allow_origins=settings.allowed_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app|https://.*\.onrender\.com|http://localhost:\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
