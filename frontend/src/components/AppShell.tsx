@@ -7,6 +7,8 @@ import { getStoredEmail, getStoredRole, logout, getToken } from "@/lib/auth";
 import { listNotifications, markAllNotificationsRead, markNotificationRead } from "@/lib/api";
 import { useTheme } from "@/components/ThemeProvider";
 import type { NotificationListOut, NotificationOut, UserRole } from "@/lib/types";
+import { NtroGovernmentLogo, GovernmentTopHeaderBar } from "@/components/NtroGovernmentLogo";
+import { formatIndianDateTime } from "@/lib/formatters";
 
 type NavSection = {
   heading: string;
@@ -178,8 +180,8 @@ function NotificationRow({
             </p>
           </div>
           <p className="mt-0.5 line-clamp-2 text-xs text-muted">{item.message}</p>
-          <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-muted">
-            {new Date(item.created_at).toLocaleString()}
+          <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-muted font-medium">
+            {formatIndianDateTime(item.created_at)}
           </p>
         </div>
       </div>
@@ -324,6 +326,9 @@ export function AppShell({
 
   return (
     <div className="flex min-h-screen flex-col bg-page">
+      {/* Official Government of India Top Header Bar */}
+      <GovernmentTopHeaderBar />
+
       {/* =========== TOP BAR =========== */}
       <header className="fg-topbar">
         <div className="flex items-center gap-3 md:hidden">
@@ -341,19 +346,9 @@ export function AppShell({
         <Link
           href="/dashboard"
           className="flex shrink-0 items-center gap-2 text-govt-navy"
-            aria-label="PRAMAAN home"
+          aria-label="PRAMAAN home"
         >
-          <span className="inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-sm bg-white shadow-card">
-            <img src="/pramaan-logo.svg" alt="PRAMAAN logo" className="h-full w-full object-cover" />
-          </span>
-          <div className="leading-tight">
-            <div className="font-display text-[15px] font-bold tracking-tight">
-              PRAMAAN
-            </div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              NTRO · Digital Forensics Platform
-            </div>
-          </div>
+          <NtroGovernmentLogo variant="header" showSubtitle={true} />
         </Link>
 
         {/* Search (desktop) */}
@@ -378,6 +373,7 @@ export function AppShell({
         <div className="ml-auto flex items-center gap-1">
           <button
             type="button"
+            onClick={toggleTheme}
             className="fg-btn-ghost !p-2"
             aria-label={theme === "govt-light" ? "Switch to dark mode" : "Switch to light mode"}
             title={theme === "govt-light" ? "Switch to dark mode" : "Switch to light mode"}

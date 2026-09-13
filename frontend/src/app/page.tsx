@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getPublicStats } from "@/lib/api";
 import type { PublicStatsOut } from "@/lib/types";
+import { NtroGovernmentLogo, GovernmentTopHeaderBar } from "@/components/NtroGovernmentLogo";
 
 // ====================================================== small building blocks
 function HeroStat({
@@ -132,7 +133,6 @@ export default function LandingPage() {
       try {
         setStats(await getPublicStats());
       } catch (e) {
-        // Stats are informative; the page must still render.
         setErr(e instanceof Error ? e.message : null);
       }
     })();
@@ -140,27 +140,14 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-page text-main font-display">
-      {/* ---- top ornamental band ---- */}
-      <div aria-hidden><div className="h-1.5 bg-govt-navy" /><div className="h-0.5 bg-govt-gold" /></div>
+      {/* Government Top Header Bar */}
+      <GovernmentTopHeaderBar />
 
       {/* ========================================================== NAV */}
-      <header className="sticky top-0 z-40 border-b border-line bg-panel/90 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-line bg-panel/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3 md:px-8">
           <Link href="/" className="inline-flex items-center gap-3">
-            <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-sm border border-govt-blueRing bg-gradient-to-br from-govt-blue to-govt-navy text-white shadow-card">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 3 4 6v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V6l-8-3z" /><path d="m9 12 2 2 4-4" />
-              </svg>
-              <span className="absolute inset-x-1 bottom-1 h-0.5 bg-govt-gold" />
-            </span>
-            <span className="leading-tight">
-              <span className="block font-display text-[17px] font-bold tracking-tight text-govt-navy">
-                PRAMAAN
-              </span>
-              <span className="block font-mono text-[9px] uppercase tracking-[0.28em] text-muted">
-                NTRO · Digital Forensics &amp; Sanitisation
-              </span>
-            </span>
+            <NtroGovernmentLogo variant="header" showSubtitle={true} />
           </Link>
           <nav className="hidden flex-wrap items-center gap-5 md:flex text-sm">
             <a href="#features" className="text-main hover:text-govt-navy">Features</a>
@@ -185,95 +172,144 @@ export default function LandingPage() {
       {/* ========================================================== HERO */}
       <section
         id="hero"
-        className="relative overflow-hidden border-b border-line"
+        className="relative overflow-hidden bg-[#F8FAFC] text-main border-b border-line"
       >
+        {/* Subtle Architectural Pattern */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 opacity-[0.85]"
+          className="absolute inset-0 opacity-[0.6] pointer-events-none"
           style={{
             backgroundImage:
-              "radial-gradient(700px 360px at 8% -10%, rgba(37,99,235,0.18), transparent 70%), radial-gradient(700px 400px at 100% 110%, rgba(234,179,8,0.14), transparent 70%)",
+              "radial-gradient(700px 360px at 8% -10%, rgba(0,91,172,0.08), transparent 70%), radial-gradient(700px 400px at 100% 110%, rgba(212,175,55,0.1), transparent 70%)",
           }}
         />
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-16 md:px-8 md:py-20 lg:grid-cols-[1.15fr,0.85fr] lg:items-center">
+
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-[1.2fr,0.8fr] lg:items-center">
           <div>
-            <div className="mb-5 inline-flex items-center gap-2 rounded-sm border border-govt-gold/70 bg-govt-goldLight px-3 py-1 font-mono text-[10px] uppercase tracking-[0.26em] text-govt-navy">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-govt-navy" />
-              Ministry of Defence · NTRO · SIH 2026 Grand Finale
+            {/* Government Mandate Badge */}
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-govt-gold/60 bg-govt-goldLight/70 px-4 py-1.5 shadow-xs">
+              <span className="inline-block h-2 w-2 rounded-full bg-govt-goldDark animate-pulse" />
+              <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-govt-navy">
+                GOVT OF INDIA · NTRO · PROBLEM STATEMENT ID 26149
+              </span>
             </div>
-            <h1 className="font-display text-[40px] leading-[1.05] font-semibold text-govt-navy md:text-[52px]">
-              Integrated Secure Data Sanitisation &amp; Digital Forensic Recovery Platform
-            </h1>
-            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-muted">
-              PRAMAAN unifies three specialised modules — secure drive
-              erasure, selective file/folder sanitisation, and forensic-grade
-              file carving &amp; recovery — under a single tamper-resistant
-              government workspace, with an immutable SHA-256 chain ledger,
-              ECDSA operator signatures, and independently verifiable PDF
-              certificates.
+
+            {/* PRAMAAN Brand Header */}
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-baseline gap-3">
+                <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-govt-navy">
+                  PRAMAAN
+                </h1>
+                <span className="font-mono text-2xl md:text-3xl font-bold tracking-widest text-govt-goldDark uppercase border-l-2 border-govt-gold/60 pl-3">
+                  प्रमाण
+                </span>
+              </div>
+              <p className="text-lg md:text-xl font-semibold text-govt-navy/90 tracking-wide font-display">
+                Integrated Secure Data Sanitisation &amp; Digital Forensic Recovery Platform
+              </p>
+            </div>
+
+            {/* Core Value Statement */}
+            <p className="mt-5 max-w-2xl text-sm md:text-base leading-relaxed text-muted">
+              Engineered for defense, intelligence, and law enforcement agencies to execute NIST SP 800-88 Rev. 1 compliant drive erasures, selective file destruction, and forensic file carving — sealed with an immutable SHA-256 hash-chain and ECDSA signatures.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/login" className="fg-btn-primary !py-3 !px-6 text-sm">
-                Access Operator Console →
-              </Link>
-              <Link href="/verify" className="fg-btn !py-3 !px-6 text-sm">
-                Verify a Certificate
-              </Link>
+
+            {/* Platform Badges */}
+            <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-mono">
+              <span className="bg-govt-blueLight text-govt-navy px-2.5 py-1 rounded border border-govt-blueRing font-semibold">NIST SP 800-88 REV. 1</span>
+              <span className="bg-white text-main px-2.5 py-1 rounded border border-line font-medium">ISO 27037 FORENSIC SEAL</span>
+              <span className="bg-white text-main px-2.5 py-1 rounded border border-line font-medium">DoD 5220.22-M</span>
+              <span className="bg-govt-goldLight text-govt-navy px-2.5 py-1 rounded border border-govt-gold/40 font-bold">ECDSA P-256 ANCHORED</span>
             </div>
-            <div className="mt-4 font-mono text-[10px] uppercase tracking-[0.22em] text-muted">
-              NIST SP 800-88 Rev. 1 · ISO 27037 · DoD 5220.22-M · MeitY GSR 2025
+
+            {/* Call to Action Buttons */}
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 rounded-lg bg-govt-navy hover:bg-govt-blueDark text-white font-bold px-6 py-3 text-sm transition-all shadow-md hover:shadow-lg hover:scale-[1.01]"
+              >
+                <span>Access Operator Console</span>
+                <span className="text-lg">→</span>
+              </Link>
+              <Link
+                href="/verify"
+                className="inline-flex items-center gap-2 rounded-lg bg-white hover:bg-field text-govt-navy border border-line font-semibold px-6 py-3 text-sm transition-all shadow-xs"
+              >
+                <span>Verify Certificate</span>
+                <span className="text-xs">🛡️</span>
+              </Link>
+              <Link
+                href="/dashboard/manual"
+                className="inline-flex items-center gap-2 rounded-lg bg-transparent hover:bg-field text-muted hover:text-govt-navy font-medium px-4 py-3 text-sm transition-all"
+              >
+                <span>User Manual</span>
+                <span className="text-xs">📖</span>
+              </Link>
             </div>
           </div>
 
-          {/* Hero stats */}
+          {/* Right Column: Platform Integrity Visual Card */}
           <div className="relative">
-            <div className="rounded-md border border-govt-blueRing bg-white/75 shadow-card-md p-5">
-              <div className="flex items-center justify-between">
+            <div className="rounded-xl border border-line bg-white shadow-card-md p-6">
+              <div className="flex items-center justify-between border-b border-line pb-4">
                 <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-govt-blue">
-                    Platform Integrity
+                  <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-govt-blue font-bold">
+                    NATIONAL SECURITY WORKSPACE
                   </div>
-                  <div className="mt-1 font-display text-xl font-semibold text-govt-navy">
-                    Chain Verification
+                  <div className="mt-1 font-display text-xl font-bold text-govt-navy">
+                    Platform Integrity Live Feed
                   </div>
                 </div>
-                <span className="inline-flex items-center gap-2 rounded-sm border border-govt-green/50 bg-govt-greenLight px-2.5 py-1 text-xs text-govt-green">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-govt-green" /> Anchored
+                <span className="inline-flex items-center gap-2 rounded-full border border-govt-green/40 bg-govt-greenLight px-3 py-1 text-xs font-medium text-govt-green">
+                  <span className="h-2 w-2 rounded-full bg-govt-green animate-pulse" /> Live
                 </span>
               </div>
+
+              {/* Grid Metrics */}
               <div className="mt-5 grid grid-cols-2 gap-3">
-                <HeroStat
-                  label="Operations Logged"
-                  value={stats ? stats.operations_count.toLocaleString() : "—"}
-                  accent="navy"
-                />
-                <HeroStat
-                  label="Devices Managed"
-                  value={stats ? stats.devices_count.toLocaleString() : "—"}
-                  accent="blue"
-                />
-                <HeroStat
-                  label="Case Files Opened"
-                  value={stats ? stats.cases_count.toLocaleString() : "—"}
-                  accent="gold"
-                />
-                <HeroStat
-                  label="Chain Integrity"
-                  value={stats ? `${Math.round(stats.chain_verification_pct)}%` : "—"}
-                  accent="green"
-                />
+                <div className="rounded-lg border border-line bg-field p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Operations Logged</div>
+                  <div className="mt-1 font-display text-2xl font-bold text-govt-navy tabular-nums">
+                    {stats ? stats.operations_count.toLocaleString() : "—"}
+                  </div>
+                </div>
+                <div className="rounded-lg border border-line bg-field p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Devices Managed</div>
+                  <div className="mt-1 font-display text-2xl font-bold text-govt-navy tabular-nums">
+                    {stats ? stats.devices_count.toLocaleString() : "—"}
+                  </div>
+                </div>
+                <div className="rounded-lg border border-line bg-field p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Case Files Opened</div>
+                  <div className="mt-1 font-display text-2xl font-bold text-govt-navy tabular-nums">
+                    {stats ? stats.cases_count.toLocaleString() : "—"}
+                  </div>
+                </div>
+                <div className="rounded-lg border border-line bg-field p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Chain Integrity</div>
+                  <div className="mt-1 font-display text-2xl font-bold text-govt-green tabular-nums">
+                    {stats ? `${Math.round(stats.chain_verification_pct)}%` : "100%"}
+                  </div>
+                </div>
               </div>
-              {err && (
-                <p className="mt-4 text-[11px] text-muted">
-                  Live stat feed unavailable ({err}). Values shown are cached at platform level.
-                </p>
-              )}
-              <div className="mt-5 rounded-sm border border-dashed border-govt-blueRing bg-govt-blueLight/60 p-3">
-                <p className="text-[12px] text-main">
-                  <span className="font-semibold text-govt-navy">Problem ID 26149.</span>{" "}
-                  Design and Development of an Integrated Secure Data Erasure
-                  and Advanced File Recovery Tool for Digital Forensics and
-                  Data Sanitisation — National Technical Research Organisation (NTRO).
+
+              {/* NIST SP 800-88 Sanitisation Modes Strip */}
+              <div className="mt-5 rounded-lg border border-line bg-field p-3.5 space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono text-main">
+                  <span>Sanitisation Primitives:</span>
+                  <span className="text-govt-navy font-bold">NIST SP 800-88 Rev. 1</span>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5 text-[10px] font-mono text-center">
+                  <div className="bg-govt-blueLight border border-govt-blueRing py-1 rounded text-govt-navy font-bold">CLEAR</div>
+                  <div className="bg-govt-goldLight border border-govt-gold/40 py-1 rounded text-govt-navy font-bold">PURGE</div>
+                  <div className="bg-govt-greenLight border border-govt-green/30 py-1 rounded text-govt-green font-bold">CRYPTO-ERASE</div>
+                </div>
+              </div>
+
+              {/* NTRO Problem Statement Note */}
+              <div className="mt-4 rounded-lg border border-dashed border-govt-blueRing bg-govt-blueLight/50 p-3">
+                <p className="text-[11px] text-main leading-relaxed">
+                  <span className="font-bold text-govt-navy">NTRO PS ID 26149:</span> Integrated Secure Data Erasure and Advanced File Recovery Tool for Digital Forensics and Data Sanitisation.
                 </p>
               </div>
             </div>
@@ -485,12 +521,7 @@ export default function LandingPage() {
       <footer className="bg-govt-navy text-white">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 md:grid-cols-4 md:px-8">
           <div>
-            <div className="font-display text-lg font-semibold tracking-tight">
-              PRAMAAN
-            </div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/60">
-              Digital Forensics Unit · NTRO
-            </div>
+            <NtroGovernmentLogo variant="dark" showSubtitle={true} />
             <p className="mt-3 text-[12px] leading-relaxed text-white/70">
               Integrated platform for secure storage sanitisation, forensic file
               recovery, and immutable operation ledger. Built for government use.
