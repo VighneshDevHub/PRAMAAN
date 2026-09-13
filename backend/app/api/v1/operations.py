@@ -6,10 +6,10 @@ from fastapi.responses import Response
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db, get_signing_keys
+from app.api.deps import get_current_user, get_db, get_signing_keys, require_roles
 from app.core.crypto import sign_payload
 from app.models.operation_record import LedgerEntry, OperationRecord
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.schemas.operation import OperationRecordOut, OperationReportIn
 from app.services import ledger_service, notification_service
 from app.services.pdf_service import generate_operation_pdf
@@ -159,3 +159,28 @@ async def get_operation_pdf(
         media_type="application/pdf",
         headers={"Content-Disposition": f'inline; filename="report_{certificate_id}.pdf"'},
     )
+
+
+@router.delete("/{certificate_id}", status_code=204)
+async def delete_operation(
+    certificate_id: str,
+    db: AsyncSession = Depends(get_db),
+    _user: User = Depends(require_roles(UserRole.ADMINISTRATOR, UserRole.INVESTIGATOR, UserRole.SUPERVISOR)),
+) -> None:
+    result = await db.execute(
+        select(OperationRecord).where(OperationRecord.certificate_id == certificate_id)
+    )
+    record = result.scalar_one_or_none()
+    if record is None:
+        return
+
+    ledger_result = await db.execute(
+        select(LedgerEntry).where(LedgerEntry.operation_record_id == record.id)
+    )
+    ledger_entry = ledger_result.scalar_one_or_none()
+    if ledger_entry:
+        await db.delete(ledger_entry)
+
+    await db.delete(record)
+    await db.commit()
+

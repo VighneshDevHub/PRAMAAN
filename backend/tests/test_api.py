@@ -179,3 +179,19 @@ async def test_get_operation_pdf_for_recovery_type(client):
 async def test_get_operation_pdf_404_for_unknown_id(client):
     resp = await client.get("/api/v1/operations/does-not-exist/pdf")
     assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_delete_operation(client):
+    headers = await _auth_headers(client)
+    create_resp = await client.post("/api/v1/operations", json=DRIVE_ERASE_REPORT, headers=headers)
+    cert_id = create_resp.json()["certificate_id"]
+
+    # Delete operation
+    del_resp = await client.delete(f"/api/v1/operations/{cert_id}", headers=headers)
+    assert del_resp.status_code == 204
+
+    # Verify deleted
+    get_resp = await client.get(f"/api/v1/operations/{cert_id}")
+    assert get_resp.status_code == 404
+

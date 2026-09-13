@@ -286,3 +286,33 @@ async def test_audit_role_can_never_claim_progress_or_complete(client):
         else:
             resp = await client.patch(path, json={}, headers=_auth_header(aud_token))
         assert resp.status_code == 403, f"{path} should return 403 for Auditor, got {resp.status_code}"
+
+
+@pytest.mark.asyncio
+async def test_delete_job_by_id_and_number(client):
+    inv_token = await _register_and_login(client, "deljob-inv@fg.example", "supersecret123")
+
+    create = await client.post(
+        "/api/v1/jobs", json=_job_payload(), headers=_auth_header(inv_token)
+    )
+    assert create.status_code == 201
+    body = create.json()
+    job_id = body["id"]
+    job_number = body["job_number"]
+
+    # Deleting by job ID returns 204
+    del_resp = await client.delete(f"/api/v1/jobs/{job_id}", headers=_auth_header(inv_token))
+    assert del_resp.status_code == 204
+
+    # GET after delete returns 404
+    get_resp = await client.get(f"/api/v1/jobs/{job_id}", headers=_auth_header(inv_token))
+    assert get_resp.status_code == 404
+
+    # Create another job and delete by job_number
+    create2 = await client.post(
+        "/api/v1/jobs", json=_job_payload(), headers=_auth_header(inv_token)
+    )
+    job_number2 = create2.json()["job_number"]
+    del_resp2 = await client.delete(f"/api/v1/jobs/{job_number2}", headers=_auth_header(inv_token))
+    assert del_resp2.status_code == 204
+

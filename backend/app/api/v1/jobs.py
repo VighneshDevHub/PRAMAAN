@@ -35,7 +35,7 @@ def _utcnow() -> datetime:
 
 
 async def _get_job_or_404(db: AsyncSession, job_id: str) -> Job:
-    result = await db.execute(select(Job).where(Job.id == job_id))
+    result = await db.execute(select(Job).where((Job.id == job_id) | (Job.job_number == job_id)))
     job = result.scalar_one_or_none()
     if job is None:
         raise HTTPException(status_code=404, detail="Job not found")
@@ -297,3 +297,21 @@ async def retry_job(
     await db.commit()
     await db.refresh(clone)
     return JobOut.model_validate(clone)
+
+
+@router.delete("/{job_id}", status_code=204)
+async def delete_job(
+    job_id: str,
+    db: AsyncSession = Depends(get_db),
+    _user: User = Depends(require_roles(*_CANCEL_ROLES)),
+) -> None:
+    result = await db.execute(select(Job).where((Job.id == job_id) | (Job.job_number == job_id)))
+    job = result.scalar_one_or_none()
+    if job is None:
+        return
+    child_result = await db.execute(select(Job).where(Job.parent_job_id == job.id))
+    for child in child_result.scalars().all():
+        child.parent_job_id = None
+    await db.delete(job)
+    await db.commit()
+
