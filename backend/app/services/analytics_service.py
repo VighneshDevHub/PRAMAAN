@@ -187,19 +187,27 @@ async def get_timeseries(db: AsyncSession, metric: str, range_days: int) -> list
 
 
 async def get_public_stats(db: AsyncSession) -> dict:
-    ops_stmt = select(func.count()).select_from(OperationRecord)
-    operations_count = int((await db.execute(ops_stmt)).scalar_one() or 0)
+    try:
+        ops_stmt = select(func.count()).select_from(OperationRecord)
+        operations_count = int((await db.execute(ops_stmt)).scalar_one() or 0)
 
-    devices_stmt = select(func.count()).select_from(Device)
-    devices_count = int((await db.execute(devices_stmt)).scalar_one() or 0)
+        devices_stmt = select(func.count()).select_from(Device)
+        devices_count = int((await db.execute(devices_stmt)).scalar_one() or 0)
 
-    from app.models.case_management import CaseRecord
-    cases_stmt = select(func.count()).select_from(CaseRecord)
-    cases_count = int((await db.execute(cases_stmt)).scalar_one() or 0)
+        from app.models.case_management import CaseRecord
+        cases_stmt = select(func.count()).select_from(CaseRecord)
+        cases_count = int((await db.execute(cases_stmt)).scalar_one() or 0)
 
-    return {
-        "operations_count": operations_count,
-        "devices_count": devices_count,
-        "cases_count": cases_count,
-        "chain_verification_pct": 99.9,
-    }
+        return {
+            "operations_count": operations_count,
+            "devices_count": devices_count,
+            "cases_count": cases_count,
+            "chain_verification_pct": 99.9,
+        }
+    except Exception:
+        return {
+            "operations_count": 0,
+            "devices_count": 0,
+            "cases_count": 0,
+            "chain_verification_pct": 99.9,
+        }

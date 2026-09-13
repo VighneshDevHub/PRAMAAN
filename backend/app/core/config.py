@@ -39,7 +39,12 @@ class Settings(BaseSettings):
         origins = [self.PUBLIC_BASE_URL]
         if self.EXTRA_CORS_ORIGINS:
             origins += [o.strip() for o in self.EXTRA_CORS_ORIGINS.split(",") if o.strip()]
-        return origins
+        origins.extend([
+            "https://pramaan-ntro.vercel.app",
+            "http://localhost:3000",
+            "http://localhost:5173",
+        ])
+        return list(dict.fromkeys(origins))
 
     @field_validator("DATABASE_URL")
     @classmethod

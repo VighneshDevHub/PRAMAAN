@@ -35,7 +35,11 @@ import type {
 } from "./types";
 import { clearSession, getToken } from "./auth";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== "undefined" && window.location.hostname.includes("vercel.app")
+    ? "https://pramaan-pr4m.onrender.com"
+    : "http://localhost:8000");
 
 export class NotFoundError extends Error {}
 export class UnauthorizedError extends Error {}

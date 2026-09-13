@@ -11,6 +11,8 @@ settings = get_settings()
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=(settings.ENVIRONMENT == "development"),
+    pool_pre_ping=True,
+    pool_recycle=300,
     future=True,
 )
 
@@ -46,8 +48,7 @@ async def _ensure_user_role_column() -> None:
             existing = {row[1] for row in rows} if rows else set()
         else:
             probe = await conn.execute(text(
-                "SELECT column_name FROM information_schema.columns "
-                "WHERE table_name = 'users' AND table_schema = CURRENT_SCHEMA"
+                "SELECT column_name FROM information_schema.columns WHERE table_name = 'users'"
             ))
             existing = {row[0] for row in probe.fetchall()}
 
@@ -71,6 +72,7 @@ async def _ensure_user_role_column() -> None:
 async def init_models() -> None:
     """Create tables if they don't exist. Fine for dev; production should
     use Alembic migrations instead."""
+    import app.models  # noqa: F401 - ensure all models register with Base.metadata before create_all
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     await _ensure_user_role_column()
