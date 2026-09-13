@@ -46,6 +46,13 @@ class Settings(BaseSettings):
         ])
         return list(dict.fromkeys(origins))
 
+    @field_validator("PUBLIC_BASE_URL")
+    @classmethod
+    def _normalize_public_base_url(cls, v: str) -> str:
+        if not v or "pramaan-frontend.vercel.app" in v or "pramaan.vercel.app" in v or "localhost" in v:
+            return "https://pramaan-ntro.vercel.app"
+        return v.strip().rstrip("/")
+
     @field_validator("DATABASE_URL")
     @classmethod
     def _normalize_database_url(cls, v: str) -> str:

@@ -155,6 +155,8 @@ def generate_operation_pdf(record: dict, session=None) -> bytes:
     operation_type = record["operation_type"]
     title = TITLES.get(operation_type, "OPERATION REPORT")
     base_url = settings.PUBLIC_BASE_URL.rstrip("/")
+    if not base_url or "pramaan-frontend" in base_url or "pramaan.vercel.app" in base_url or "localhost" in base_url:
+        base_url = "https://pramaan-ntro.vercel.app"
     verify_url = f"{base_url}/verify/{record['certificate_id']}"
     qr_buffer = _build_qr_image(verify_url)
 
