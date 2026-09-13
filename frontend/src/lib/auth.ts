@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+import { getApiBaseUrl } from "./config";
+
 const TOKEN_KEY = "pramaan_token";
 
 const EMAIL_KEY = "pramaan_email";
@@ -66,7 +67,8 @@ async function authErrorMessage(
 }
 
 export async function login(email: string, password: string): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+  const baseUrl = getApiBaseUrl();
+  const res = await fetch(`${baseUrl}/api/v1/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: email.trim(), password }),
@@ -95,7 +97,8 @@ export async function register(
     | "AUDITOR"
     | "SUPERVISOR" = "INVESTIGATOR",
 ): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
+  const baseUrl = getApiBaseUrl();
+  const res = await fetch(`${baseUrl}/api/v1/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: email.trim(), password, role }),

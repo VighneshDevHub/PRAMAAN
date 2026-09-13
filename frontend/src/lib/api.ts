@@ -34,12 +34,7 @@ import type {
   VerificationResult,
 } from "./types";
 import { clearSession, getToken } from "./auth";
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  (typeof window !== "undefined" && window.location.hostname.includes("vercel.app")
-    ? "https://pramaan-pr4m.onrender.com"
-    : "http://localhost:8000");
+import { getApiBaseUrl } from "./config";
 
 export class NotFoundError extends Error {}
 export class UnauthorizedError extends Error {}
@@ -73,7 +68,8 @@ async function fetchJson<T>(
     mergedHeaders.set("Content-Type", "application/json");
   }
 
-  const res = await fetch(`${API_BASE_URL}${path}`, {
+  const baseUrl = getApiBaseUrl();
+  const res = await fetch(`${baseUrl}${path}`, {
     method,
     cache: "no-store",
     headers: mergedHeaders,
@@ -136,7 +132,7 @@ export async function listOperations(): Promise<OperationRecord[]> {
 }
 
 export function getOperationPdfUrl(certificateId: string): string {
-  return `${API_BASE_URL}/api/v1/operations/${certificateId}/pdf`;
+  return `${getApiBaseUrl()}/api/v1/operations/${certificateId}/pdf`;
 }
 
 export async function deleteOperation(certificateId: string): Promise<void> {
@@ -583,7 +579,7 @@ export async function listMonthlyReport(params?: {
 }
 
 export function getCertificateReportPdfUrl(certificateId: string): string {
-  return `${API_BASE_URL}/api/v1/reports/certificates/${certificateId}/pdf`;
+  return `${getApiBaseUrl()}/api/v1/reports/certificates/${certificateId}/pdf`;
 }
 
 export function getCertificatesCsvDownloadUrl(params?: {
@@ -598,7 +594,7 @@ export function getCertificatesCsvDownloadUrl(params?: {
     operator_email: params?.operator_email,
     success: params?.success,
   });
-  return `${API_BASE_URL}/api/v1/reports/certificates/download.csv${qs}`;
+  return `${getApiBaseUrl()}/api/v1/reports/certificates/download.csv${qs}`;
 }
 
 // --- settings ------------------------------------------------------------
@@ -642,5 +638,8 @@ export async function getPublicStats(): Promise<PublicStatsOut> {
   return fetchJson<PublicStatsOut>(`/api/v1/public/stats`);
 }
 
-// --- re-export API base URL for the ws hook ------------------------------
-export const API_BASE = API_BASE_URL;
+// --- re-export API base URL helper ---------------------------------------
+export function getApiBase(): string {
+  return getApiBaseUrl();
+}
+export const API_BASE = getApiBaseUrl();

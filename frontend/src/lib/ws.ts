@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getToken } from "./auth";
-import { API_BASE } from "./api";
+import { getApiBaseUrl } from "./config";
 import type { WSJobEvent, WSLogEvent, WSUserEvent } from "./types";
 
 type WSReadyState = "connecting" | "open" | "closed" | "unauthenticated";
@@ -24,7 +24,7 @@ function buildSocket(path: string): WebSocket | null {
   if (typeof window === "undefined") return null;
   const token = getToken();
   if (!token) return null;
-  const base = wsHttpToWs(API_BASE);
+  const base = wsHttpToWs(getApiBaseUrl());
   const url = `${base}/api/v1${path}?token=${encodeURIComponent(token)}`;
   return new WebSocket(url);
 }
