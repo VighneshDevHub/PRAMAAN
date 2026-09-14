@@ -1,6 +1,5 @@
 {
   "name": "pramaan-frontend",
-
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,17 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "lucide-react": "^1.45.0",
     "next": "14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "typescript": "^5.5.4",
     "@types/node": "^20.14.15",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "tailwindcss": "^3.4.19",
+    "autoprefixer": "^10.4.19",
     "postcss": "^8.5.26",
-    "autoprefixer": "^10.4.19"
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.5.4"
   }
 }

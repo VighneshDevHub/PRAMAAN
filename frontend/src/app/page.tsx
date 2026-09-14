@@ -172,22 +172,28 @@ export default function LandingPage() {
       {/* ========================================================== HERO */}
       <section
         id="hero"
-        className="relative overflow-hidden bg-[#F8FAFC] text-main border-b border-line"
+        className="relative overflow-hidden bg-[#F4F7FA] text-main border-b border-line min-h-[580px] flex flex-col justify-between"
       >
-        {/* Subtle Architectural Pattern */}
+        {/* Government Forensics Hero Background Image */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 opacity-[0.6] pointer-events-none"
+          className="absolute inset-0 bg-cover bg-right-top bg-no-repeat opacity-95 pointer-events-none"
           style={{
-            backgroundImage:
-              "radial-gradient(700px 360px at 8% -10%, rgba(0,91,172,0.08), transparent 70%), radial-gradient(700px 400px at 100% 110%, rgba(212,175,55,0.1), transparent 70%)",
+            backgroundImage: "url('/bg.png')",
           }}
         />
 
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-[1.2fr,0.8fr] lg:items-center">
-          <div>
+        {/* Soft Scrim Gradient - Left Side Only for Crisp Text Legibility */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/70 to-transparent pointer-events-none w-full md:w-2/3 lg:w-[55%]"
+        />
+
+        {/* Hero Main Content Area */}
+        <div className="relative mx-auto max-w-7xl px-5 pt-12 pb-16 md:px-8 md:pt-16 md:pb-20 w-full">
+          <div className="max-w-xl lg:max-w-2xl">
             {/* Government Mandate Badge */}
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-govt-gold/60 bg-govt-goldLight/70 px-4 py-1.5 shadow-xs">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-govt-gold/60 bg-govt-goldLight/90 px-4 py-1.5 shadow-xs backdrop-blur-xs">
               <span className="inline-block h-2 w-2 rounded-full bg-govt-goldDark animate-pulse" />
               <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-govt-navy">
                 GOVT OF INDIA · NTRO · PROBLEM STATEMENT ID 26149
@@ -210,15 +216,15 @@ export default function LandingPage() {
             </div>
 
             {/* Core Value Statement */}
-            <p className="mt-5 max-w-2xl text-sm md:text-base leading-relaxed text-muted">
+            <p className="mt-5 max-w-xl text-sm md:text-base leading-relaxed text-muted font-medium">
               Engineered for defense, intelligence, and law enforcement agencies to execute NIST SP 800-88 Rev. 1 compliant drive erasures, selective file destruction, and forensic file carving — sealed with an immutable SHA-256 hash-chain and ECDSA signatures.
             </p>
 
             {/* Platform Badges */}
             <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-mono">
               <span className="bg-govt-blueLight text-govt-navy px-2.5 py-1 rounded border border-govt-blueRing font-semibold">NIST SP 800-88 REV. 1</span>
-              <span className="bg-white text-main px-2.5 py-1 rounded border border-line font-medium">ISO 27037 FORENSIC SEAL</span>
-              <span className="bg-white text-main px-2.5 py-1 rounded border border-line font-medium">DoD 5220.22-M</span>
+              <span className="bg-white/90 text-main px-2.5 py-1 rounded border border-line font-medium shadow-2xs">ISO 27037 FORENSIC SEAL</span>
+              <span className="bg-white/90 text-main px-2.5 py-1 rounded border border-line font-medium shadow-2xs">DoD 5220.22-M</span>
               <span className="bg-govt-goldLight text-govt-navy px-2.5 py-1 rounded border border-govt-gold/40 font-bold">ECDSA P-256 ANCHORED</span>
             </div>
 
@@ -240,77 +246,83 @@ export default function LandingPage() {
               </Link>
               <Link
                 href="/dashboard/manual"
-                className="inline-flex items-center gap-2 rounded-lg bg-transparent hover:bg-field text-muted hover:text-govt-navy font-medium px-4 py-3 text-sm transition-all"
+                className="inline-flex items-center gap-2 rounded-lg bg-white/70 hover:bg-white text-muted hover:text-govt-navy font-medium px-4 py-3 text-sm transition-all border border-line/50"
               >
                 <span>User Manual</span>
                 <span className="text-xs">📖</span>
               </Link>
             </div>
           </div>
+        </div>
 
-          {/* Right Column: Platform Integrity Visual Card */}
-          <div className="relative">
-            <div className="rounded-xl border border-line bg-white shadow-card-md p-6">
-              <div className="flex items-center justify-between border-b border-line pb-4">
-                <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-govt-blue font-bold">
-                    NATIONAL SECURITY WORKSPACE
-                  </div>
-                  <div className="mt-1 font-display text-xl font-bold text-govt-navy">
-                    Platform Integrity Live Feed
-                  </div>
+        {/* Full-Width Government Control Panel Live Stats Bar */}
+        <div className="relative z-10 border-t border-govt-gold/30 bg-govt-navy text-white py-3.5 shadow-lg">
+          <div className="mx-auto max-w-7xl px-5 md:px-8 flex flex-wrap items-center justify-between gap-4">
+            {/* Left Group: Live Status + Workspace Title + Sanitisation Primitives */}
+            <div className="flex flex-wrap items-center gap-3 md:gap-4">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-300">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /> Live
+              </span>
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-govt-goldLight font-bold">
+                  NATIONAL SECURITY WORKSPACE
                 </div>
-                <span className="inline-flex items-center gap-2 rounded-full border border-govt-green/40 bg-govt-greenLight px-3 py-1 text-xs font-medium text-govt-green">
-                  <span className="h-2 w-2 rounded-full bg-govt-green animate-pulse" /> Live
-                </span>
-              </div>
-
-              {/* Grid Metrics */}
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <div className="rounded-lg border border-line bg-field p-4">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Operations Logged</div>
-                  <div className="mt-1 font-display text-2xl font-bold text-govt-navy tabular-nums">
-                    {stats ? stats.operations_count.toLocaleString() : "—"}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-line bg-field p-4">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Devices Managed</div>
-                  <div className="mt-1 font-display text-2xl font-bold text-govt-navy tabular-nums">
-                    {stats ? stats.devices_count.toLocaleString() : "—"}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-line bg-field p-4">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Case Files Opened</div>
-                  <div className="mt-1 font-display text-2xl font-bold text-govt-navy tabular-nums">
-                    {stats ? stats.cases_count.toLocaleString() : "—"}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-line bg-field p-4">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted">Chain Integrity</div>
-                  <div className="mt-1 font-display text-2xl font-bold text-govt-green tabular-nums">
-                    {stats ? `${Math.round(stats.chain_verification_pct)}%` : "100%"}
-                  </div>
+                <div className="text-xs font-semibold text-white/90 font-display">
+                  Platform Integrity Live Feed
                 </div>
               </div>
 
-              {/* NIST SP 800-88 Sanitisation Modes Strip */}
-              <div className="mt-5 rounded-lg border border-line bg-field p-3.5 space-y-2">
-                <div className="flex items-center justify-between text-xs font-mono text-main">
-                  <span>Sanitisation Primitives:</span>
-                  <span className="text-govt-navy font-bold">NIST SP 800-88 Rev. 1</span>
+              {/* Inline Sanitisation Primitives Badges */}
+              <div className="hidden sm:flex items-center gap-1.5 font-mono text-[10px] border-l border-white/20 pl-3 md:pl-4 ml-1">
+                <span className="text-white/60 text-[10px] mr-1">Primitives:</span>
+                <span className="bg-white/10 px-2 py-0.5 rounded text-white border border-white/20 font-bold">CLEAR</span>
+                <span className="bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded border border-amber-400/30 font-bold">PURGE</span>
+                <span className="bg-emerald-400/20 text-emerald-200 px-2 py-0.5 rounded border border-emerald-400/30 font-bold">CRYPTO-ERASE</span>
+              </div>
+            </div>
+
+            {/* Right Group: Metrics Counters */}
+            <div className="flex flex-wrap items-center gap-5 sm:gap-6 md:gap-8">
+              <div className="flex items-center gap-2.5">
+                <div className="font-display text-2xl font-extrabold text-white tabular-nums">
+                  {stats ? stats.operations_count.toLocaleString() : "—"}
                 </div>
-                <div className="grid grid-cols-3 gap-1.5 text-[10px] font-mono text-center">
-                  <div className="bg-govt-blueLight border border-govt-blueRing py-1 rounded text-govt-navy font-bold">CLEAR</div>
-                  <div className="bg-govt-goldLight border border-govt-gold/40 py-1 rounded text-govt-navy font-bold">PURGE</div>
-                  <div className="bg-govt-greenLight border border-govt-green/30 py-1 rounded text-govt-green font-bold">CRYPTO-ERASE</div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-white/70 leading-tight">
+                  Operations<br />Logged
                 </div>
               </div>
 
-              {/* NTRO Problem Statement Note */}
-              <div className="mt-4 rounded-lg border border-dashed border-govt-blueRing bg-govt-blueLight/50 p-3">
-                <p className="text-[11px] text-main leading-relaxed">
-                  <span className="font-bold text-govt-navy">NTRO PS ID 26149:</span> Integrated Secure Data Erasure and Advanced File Recovery Tool for Digital Forensics and Data Sanitisation.
-                </p>
+              <div className="h-7 w-px bg-white/20 hidden sm:block" />
+
+              <div className="flex items-center gap-2.5">
+                <div className="font-display text-2xl font-extrabold text-white tabular-nums">
+                  {stats ? stats.devices_count.toLocaleString() : "—"}
+                </div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-white/70 leading-tight">
+                  Devices<br />Managed
+                </div>
+              </div>
+
+              <div className="h-7 w-px bg-white/20 hidden sm:block" />
+
+              <div className="flex items-center gap-2.5">
+                <div className="font-display text-2xl font-extrabold text-white tabular-nums">
+                  {stats ? stats.cases_count.toLocaleString() : "—"}
+                </div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-white/70 leading-tight">
+                  Case Files<br />Opened
+                </div>
+              </div>
+
+              <div className="h-7 w-px bg-white/20 hidden sm:block" />
+
+              <div className="flex items-center gap-2.5">
+                <div className="font-display text-2xl font-extrabold text-emerald-400 tabular-nums">
+                  {stats ? `${Math.round(stats.chain_verification_pct)}%` : "100%"}
+                </div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-white/70 leading-tight">
+                  Chain<br />Integrity
+                </div>
               </div>
             </div>
           </div>
