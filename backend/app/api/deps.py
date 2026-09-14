@@ -10,14 +10,8 @@ from app.core.security import decode_access_token
 from app.db.session import get_db  # re-exported
 from app.models.user import User, UserRole
 
-_cached_keys: tuple[str, str] | None = None
-
-
 def get_signing_keys() -> tuple[str, str]:
-    global _cached_keys
-    if _cached_keys is None:
-        _cached_keys = get_or_create_dev_keypair()
-    return _cached_keys
+    return get_or_create_dev_keypair()
 
 
 _bearer_scheme = HTTPBearer(auto_error=False)
