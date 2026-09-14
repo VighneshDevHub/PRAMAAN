@@ -282,7 +282,7 @@ export function GovernmentTopHeaderBar() {
         {screenReaderAnnounce}
       </div>
 
-      <div className="border-b border-govt-navy/10 bg-[#051329] text-white text-[11px] relative z-40">
+      <div className="border-b border-govt-navy/10 bg-[#051329] text-white text-[11px] relative z-[100]">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-1.5 md:px-8">
           
           {/* Left Side: Flag & Made in India / NTRO Tag */}
@@ -397,7 +397,7 @@ export function GovernmentTopHeaderBar() {
                     className="fixed inset-0 z-[9998]"
                     onClick={() => setLangDropdownOpen(false)}
                   />
-                  <div className="absolute right-0 mt-1.5 w-44 rounded-lg bg-[#07172B] border border-govt-gold/40 shadow-2xl py-1.5 z-[9999] text-white divide-y divide-white/10">
+                  <div className="absolute right-0 top-full mt-1.5 w-48 rounded-lg bg-[#07172B] border border-govt-gold/40 shadow-2xl py-1.5 z-[9999] text-white divide-y divide-white/10">
                     <div className="px-3 py-1 font-mono text-[9px] uppercase tracking-wider text-govt-gold font-bold">
                       Translate Page / भाषा चुनें
                     </div>
