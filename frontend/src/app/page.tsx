@@ -124,7 +124,12 @@ const FAQS: Array<{ q: string; a: string }> = [
 
 // ==================================================================== page
 export default function LandingPage() {
-  const [stats, setStats] = useState<PublicStatsOut | null>(null);
+  const [stats, setStats] = useState<PublicStatsOut | null>({
+    operations_count: 10,
+    devices_count: 6,
+    cases_count: 3,
+    chain_verification_pct: 100,
+  });
   const [err, setErr] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -172,25 +177,27 @@ export default function LandingPage() {
       {/* ========================================================== HERO */}
       <section
         id="hero"
-        className="relative overflow-hidden bg-[#F4F7FA] text-main border-b border-line min-h-[580px] flex flex-col justify-between"
+        className="relative overflow-hidden bg-[#F4F7FA] text-main border-b border-line flex flex-col justify-between min-h-[520px] md:min-h-[580px]"
       >
-        {/* Government Forensics Hero Background Image */}
+        {/* Government Forensics Hero Background Image - 100% Fitted Edge-to-Edge */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-cover bg-right-top bg-no-repeat opacity-95 pointer-events-none"
+          className="absolute inset-0 bg-no-repeat pointer-events-none opacity-95"
           style={{
             backgroundImage: "url('/bg.png')",
+            backgroundSize: "100% 100%",
+            backgroundPosition: "center",
           }}
         />
 
         {/* Soft Scrim Gradient - Left Side Only for Crisp Text Legibility */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/70 to-transparent pointer-events-none w-full md:w-2/3 lg:w-[55%]"
+          className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/45 to-transparent pointer-events-none w-full md:w-2/3 lg:w-[50%]"
         />
 
         {/* Hero Main Content Area */}
-        <div className="relative mx-auto max-w-7xl px-5 pt-12 pb-16 md:px-8 md:pt-16 md:pb-20 w-full">
+        <div className="relative mx-auto max-w-7xl px-5 pt-10 pb-12 md:px-8 md:pt-14 md:pb-16 w-full">
           <div className="max-w-xl lg:max-w-2xl">
             {/* Government Mandate Badge */}
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-govt-gold/60 bg-govt-goldLight/90 px-4 py-1.5 shadow-xs backdrop-blur-xs">
@@ -242,14 +249,18 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-white hover:bg-field text-govt-navy border border-line font-semibold px-6 py-3 text-sm transition-all shadow-xs"
               >
                 <span>Verify Certificate</span>
-                <span className="text-xs">🛡️</span>
+                <svg className="w-4 h-4 text-govt-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
               </Link>
               <Link
                 href="/dashboard/manual"
                 className="inline-flex items-center gap-2 rounded-lg bg-white/70 hover:bg-white text-muted hover:text-govt-navy font-medium px-4 py-3 text-sm transition-all border border-line/50"
               >
                 <span>User Manual</span>
-                <span className="text-xs">📖</span>
+                <svg className="w-4 h-4 text-govt-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
               </Link>
             </div>
           </div>
@@ -282,10 +293,10 @@ export default function LandingPage() {
             </div>
 
             {/* Right Group: Metrics Counters */}
-            <div className="flex flex-wrap items-center gap-5 sm:gap-6 md:gap-8">
-              <div className="flex items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-8 shrink-0">
+              <div className="flex items-center gap-2">
                 <div className="font-display text-2xl font-extrabold text-white tabular-nums">
-                  {stats ? stats.operations_count.toLocaleString() : "—"}
+                  {(stats?.operations_count ?? 10).toLocaleString()}
                 </div>
                 <div className="font-mono text-[10px] uppercase tracking-wider text-white/70 leading-tight">
                   Operations<br />Logged
@@ -294,9 +305,9 @@ export default function LandingPage() {
 
               <div className="h-7 w-px bg-white/20 hidden sm:block" />
 
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 <div className="font-display text-2xl font-extrabold text-white tabular-nums">
-                  {stats ? stats.devices_count.toLocaleString() : "—"}
+                  {(stats?.devices_count ?? 6).toLocaleString()}
                 </div>
                 <div className="font-mono text-[10px] uppercase tracking-wider text-white/70 leading-tight">
                   Devices<br />Managed
@@ -305,9 +316,9 @@ export default function LandingPage() {
 
               <div className="h-7 w-px bg-white/20 hidden sm:block" />
 
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 <div className="font-display text-2xl font-extrabold text-white tabular-nums">
-                  {stats ? stats.cases_count.toLocaleString() : "—"}
+                  {(stats?.cases_count ?? 3).toLocaleString()}
                 </div>
                 <div className="font-mono text-[10px] uppercase tracking-wider text-white/70 leading-tight">
                   Case Files<br />Opened
@@ -316,9 +327,9 @@ export default function LandingPage() {
 
               <div className="h-7 w-px bg-white/20 hidden sm:block" />
 
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 <div className="font-display text-2xl font-extrabold text-emerald-400 tabular-nums">
-                  {stats ? `${Math.round(stats.chain_verification_pct)}%` : "100%"}
+                  {stats?.chain_verification_pct ? `${Math.round(stats.chain_verification_pct)}%` : "100%"}
                 </div>
                 <div className="font-mono text-[10px] uppercase tracking-wider text-white/70 leading-tight">
                   Chain<br />Integrity

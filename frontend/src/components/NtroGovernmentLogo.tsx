@@ -120,19 +120,56 @@ export function NtroGovernmentLogo({
 }
 
 export function GovernmentTopHeaderBar() {
+  const [visible, setVisible] = useState(true);
   const [fontSize, setFontSize] = useState<"sm" | "md" | "lg">("md");
-  const [language, setLanguage] = useState<"en" | "hi">("en");
+  const [language, setLanguage] = useState<string>("en");
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [accessibilityModalOpen, setAccessibilityModalOpen] = useState(false);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
   const [screenReaderAnnounce, setScreenReaderAnnounce] = useState("");
 
+  const LANGUAGES = [
+    { code: "en", label: "English" },
+    { code: "hi", label: "हिन्दी (Hindi)" },
+    { code: "mr", label: "मराठी (Marathi)" },
+    { code: "ta", label: "தமிழ் (Tamil)" },
+    { code: "te", label: "తెలుగు (Telugu)" },
+    { code: "gu", label: "ગુજરાતી (Gujarati)" },
+    { code: "bn", label: "বাংলা (Bengali)" },
+    { code: "kn", label: "ಕನ್ನಡ (Kannada)" },
+  ];
+
+  // Load Google Translate script for full webpage translation
+  useEffect(() => {
+    if (typeof window !== "undefined" && !document.getElementById("google-translate-script")) {
+      const script = document.createElement("script");
+      script.id = "google-translate-script";
+      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
+
+      (window as unknown as Record<string, unknown>).googleTranslateElementInit = () => {
+        const win = window as unknown as Record<string, any>;
+        if (win.google?.translate?.TranslateElement) {
+          new win.google.translate.TranslateElement(
+            {
+              pageLanguage: "en",
+              includedLanguages: "en,hi,mr,ta,te,gu,bn,kn",
+              autoDisplay: false,
+            },
+            "google_translate_element"
+          );
+        }
+      };
+    }
+  }, []);
+
   // Load saved preferences on mount
   useEffect(() => {
     try {
       const savedSize = localStorage.getItem("pramaan_font_scale") as "sm" | "md" | "lg" | null;
-      const savedLang = localStorage.getItem("pramaan_lang") as "en" | "hi" | null;
+      const savedLang = localStorage.getItem("pramaan_lang");
       const savedContrast = localStorage.getItem("pramaan_high_contrast") === "true";
 
       if (savedSize) applyFontSize(savedSize, false);
@@ -209,17 +246,37 @@ export function GovernmentTopHeaderBar() {
     }
   };
 
-  const handleLanguageSelect = (lang: "en" | "hi") => {
-    setLanguage(lang);
+  const handleLanguageSelect = (langCode: string) => {
+    setLanguage(langCode);
     setLangDropdownOpen(false);
     try {
-      localStorage.setItem("pramaan_lang", lang);
+      localStorage.setItem("pramaan_lang", langCode);
     } catch {}
-    announceToScreenReader(`Language changed to ${lang === "en" ? "English" : "Hindi"}`);
+
+    // Set Google Translate cookie for full webpage translation
+    if (typeof window !== "undefined") {
+      const domain = window.location.hostname;
+      document.cookie = `googtrans=/en/${langCode}; path=/; domain=${domain}`;
+      document.cookie = `googtrans=/en/${langCode}; path=/`;
+
+      const googleCombo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
+      if (googleCombo) {
+        googleCombo.value = langCode;
+        googleCombo.dispatchEvent(new Event("change"));
+      } else {
+        window.location.reload();
+      }
+    }
+    announceToScreenReader(`Language changed to ${langCode}`);
   };
+
+  if (!visible) return null;
 
   return (
     <>
+      {/* Hidden Container for Google Translate Element */}
+      <div id="google_translate_element" className="hidden" />
+
       {/* Live Region for Screen Reader Announcements */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {screenReaderAnnounce}
@@ -246,8 +303,8 @@ export function GovernmentTopHeaderBar() {
             </button>
           </div>
 
-          {/* Right Side: Accessibility & Language Controls */}
-          <div className="flex items-center gap-3.5 text-white/80">
+          {/* Right Side: Accessibility, Language Controls & Dismiss X Button */}
+          <div className="flex items-center gap-3 text-white/80">
             {/* Skip to Main Content Link */}
             <button
               type="button"
@@ -320,41 +377,69 @@ export function GovernmentTopHeaderBar() {
               <button
                 type="button"
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="flex items-center gap-1 text-[11px] text-white/90 font-medium hover:text-white bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded border border-white/10 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 text-[11px] text-white font-medium hover:text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded border border-white/15 transition-colors cursor-pointer"
                 aria-expanded={langDropdownOpen}
                 aria-haspopup="true"
               >
-                <span className="text-xs">🌐</span>
-                <span>{language === "hi" ? "हिन्दी" : "English"}</span>
+                <svg className="w-3.5 h-3.5 text-govt-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m-9 9a9 9 0 019-9" />
+                </svg>
+                <span>
+                  {LANGUAGES.find((l) => l.code === language)?.label || "English"}
+                </span>
                 <span className="text-[9px] text-white/60">▾</span>
               </button>
 
               {langDropdownOpen && (
-                <div className="absolute right-0 mt-1 w-32 rounded-md bg-[#07172B] border border-white/20 shadow-xl py-1 z-50 text-white">
-                  <button
-                    type="button"
-                    onClick={() => handleLanguageSelect("en")}
-                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between hover:bg-white/10 transition-colors ${
-                      language === "en" ? "text-govt-gold font-bold bg-white/5" : "text-white/90"
-                    }`}
-                  >
-                    <span>English</span>
-                    {language === "en" && <span>✓</span>}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleLanguageSelect("hi")}
-                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between hover:bg-white/10 transition-colors ${
-                      language === "hi" ? "text-govt-gold font-bold bg-white/5" : "text-white/90"
-                    }`}
-                  >
-                    <span>हिन्दी (Hindi)</span>
-                    {language === "hi" && <span>✓</span>}
-                  </button>
-                </div>
+                <>
+                  {/* Backdrop to close dropdown on outside click */}
+                  <div
+                    className="fixed inset-0 z-[9998]"
+                    onClick={() => setLangDropdownOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-1.5 w-44 rounded-lg bg-[#07172B] border border-govt-gold/40 shadow-2xl py-1.5 z-[9999] text-white divide-y divide-white/10">
+                    <div className="px-3 py-1 font-mono text-[9px] uppercase tracking-wider text-govt-gold font-bold">
+                      Translate Page / भाषा चुनें
+                    </div>
+                    <div className="max-h-60 overflow-y-auto py-1">
+                      {LANGUAGES.map((lang) => (
+                        <button
+                          key={lang.code}
+                          type="button"
+                          onClick={() => handleLanguageSelect(lang.code)}
+                          className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between hover:bg-white/15 transition-colors ${
+                            language === lang.code ? "text-govt-gold font-bold bg-white/10" : "text-white/90"
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span className="font-mono text-[9px] font-bold uppercase bg-govt-gold/20 text-govt-gold px-1.5 py-0.5 rounded border border-govt-gold/30">
+                              {lang.code.toUpperCase()}
+                            </span>
+                            <span>{lang.label}</span>
+                          </span>
+                          {language === lang.code && <span className="text-govt-gold font-bold">✓</span>}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
               )}
             </div>
 
+            <span className="text-white/30">|</span>
+
+            {/* Dismiss / Cancel Icon Button on Far Right */}
+            <button
+              type="button"
+              onClick={() => setVisible(false)}
+              className="flex items-center justify-center p-1 rounded-md text-white/70 hover:text-white hover:bg-white/15 transition-colors cursor-pointer ml-1"
+              title="Close Top Header Bar"
+              aria-label="Close Top Header Bar"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -373,8 +458,11 @@ export function GovernmentTopHeaderBar() {
             </button>
 
             <div className="flex items-center gap-3 border-b border-white/15 pb-3">
-              <div className="h-10 w-10 rounded-full bg-govt-gold/20 flex items-center justify-center text-govt-gold text-xl font-bold">
-                ♿
+              <div className="h-10 w-10 rounded-full bg-govt-gold/20 flex items-center justify-center text-govt-gold">
+                <svg className="w-5 h-5 text-govt-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="4" r="2" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 13v-2a2 2 0 00-2-2h-3l-2.5-4.5A2 2 0 009.8 3.6L5.5 6.5A2 2 0 004.8 9.3l2.2 3.8A2 2 0 008.7 14H11v6a2 2 0 002 2h2a2 2 0 002-2v-4.5l2.5 1.5a2 2 0 002.8-.7z" />
+                </svg>
               </div>
               <div>
                 <h3 className="text-base font-bold text-white">
