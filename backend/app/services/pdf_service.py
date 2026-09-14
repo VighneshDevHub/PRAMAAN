@@ -213,26 +213,39 @@ def generate_operation_pdf(record: dict, session=None) -> bytes:
     c.rect(0, PAGE_HEIGHT - header_height - 1.5 * mm, PAGE_WIDTH, 1.5 * mm, fill=True, stroke=False)
 
     # Logo
-    logo_w = 40 * mm
-    logo_h = 28 * mm
+    logo_w = 34 * mm
+    logo_h = 24 * mm
     has_logo = False
     if logo_file:
         try:
-            c.drawImage(logo_file, margin, PAGE_HEIGHT - header_height + 5 * mm, width=logo_w, height=logo_h, preserveAspectRatio=True, mask="auto")
+            c.drawImage(logo_file, margin, PAGE_HEIGHT - header_height + 7 * mm, width=logo_w, height=logo_h, preserveAspectRatio=True, mask="auto")
             has_logo = True
         except Exception:
             has_logo = False
 
     text_x = margin + logo_w + 4 * mm if has_logo else margin
+    max_text_width = PAGE_WIDTH - text_x - margin - 2 * mm
 
+    top_text = "GOVERNMENT OF INDIA  |  NATIONAL TECHNICAL RESEARCH ORGANISATION"
+    top_font_size = 8.5
+    while top_font_size > 6.0 and c.stringWidth(top_text, "Helvetica-Bold", top_font_size) > max_text_width:
+        top_font_size -= 0.5
     c.setFillColor(colors.HexColor("#F59E0B"))
-    c.setFont("Helvetica-Bold", 8.5)
-    c.drawString(text_x, PAGE_HEIGHT - 10 * mm, "GOVERNMENT OF INDIA  |  NATIONAL TECHNICAL RESEARCH ORGANISATION")
+    c.setFont("Helvetica-Bold", top_font_size)
+    c.drawString(text_x, PAGE_HEIGHT - 10 * mm, top_text)
 
+    title_text = f"PRAMAAN — {title}"
+    title_font_size = 14.0
+    while title_font_size > 7.0 and c.stringWidth(title_text, "Helvetica-Bold", title_font_size) > max_text_width:
+        title_font_size -= 0.5
     c.setFillColor(colors.white)
-    c.setFont("Helvetica-Bold", 15)
-    c.drawString(text_x, PAGE_HEIGHT - 18.5 * mm, f"PRAMAAN — {title}")
-    c.setFont("Helvetica", 8.5)
+    c.setFont("Helvetica-Bold", title_font_size)
+    c.drawString(text_x, PAGE_HEIGHT - 18.5 * mm, title_text)
+
+    sub_font_size = 8.5
+    while sub_font_size > 6.0 and c.stringWidth(header_subtitle, "Helvetica", sub_font_size) > max_text_width:
+        sub_font_size -= 0.5
+    c.setFont("Helvetica", sub_font_size)
     c.drawString(text_x, PAGE_HEIGHT - 26.5 * mm, header_subtitle)
 
     y = PAGE_HEIGHT - header_height - 9 * mm
@@ -257,7 +270,7 @@ def generate_operation_pdf(record: dict, session=None) -> bytes:
         ("Operation Type", operation_type),
         ("Case Reference / FIR", str(case_num)),
         ("Evidence Exhibit ID", str(exhibit_num)),
-        ("Execution Window (IST)", f"{_format_ist_time(record.get('started_at'))} → {_format_ist_time(record.get('completed_at'))}"),
+        ("Execution Window (IST)", f"{_format_ist_time(record.get('started_at'))} to {_format_ist_time(record.get('completed_at'))}"),
         ("Authenticated Operator", record["operator"]),
         ("Execution Outcome", "SUCCESS (PASSED)" if record["success"] else "FAILED"),
     ]

@@ -68,14 +68,18 @@ class Settings(BaseSettings):
         if "channel_binding=" in clean:
             clean = re.sub(r"[&?]channel_binding=[^&]*", "", clean)
         clean = re.sub(r"[?&]$", "", clean)
-        if clean.startswith("sqlite+aiosqlite:///"):
+        if clean.startswith("postgres://"):
+            clean = "postgresql+asyncpg://" + clean[11:]
+        elif clean.startswith("postgresql://") and not clean.startswith("postgresql+asyncpg://"):
+            clean = "postgresql+asyncpg://" + clean[13:]
+        elif clean.startswith("sqlite+aiosqlite:///"):
             path = clean.replace("sqlite+aiosqlite:///", "")
             if path.startswith("./"):
                 rel = path[2:]
                 import os
                 backend_db = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", rel))
                 if not os.path.exists(path) and os.path.exists(backend_db):
-                    return f"sqlite+aiosqlite:///{backend_db}"
+                    clean = f"sqlite+aiosqlite:///{backend_db}"
         return clean
 
 
