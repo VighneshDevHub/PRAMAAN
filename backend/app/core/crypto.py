@@ -78,6 +78,21 @@ def verify_signature(
         return False
 
 
+DEFAULT_DEV_PRIVATE_PEM = (
+    "-----BEGIN PRIVATE KEY-----\n"
+    "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgkDy0fmiFpbkjF+/s\n"
+    "xEU6fozvEV68jwkrYKZ46+4XVaehRANCAAQR/EbPkVHy3vEtCdQZ85R+Y0Vr25WQ\n"
+    "a6AlqWeg6OzrN9SVKlQ4ozZrXN++SwKxymLQgViHhgQjaBh1ICcMF1az\n"
+    "-----END PRIVATE KEY-----\n"
+)
+DEFAULT_DEV_PUBLIC_PEM = (
+    "-----BEGIN PUBLIC KEY-----\n"
+    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEfxGz5FR8t7xLQnUGfOUfmNFa9uV\n"
+    "kGugJalnoOjs6zfUlSpUOKM2a1zfvksCscpi0IFYh4YEI2gYdSAnDBdWsw==\n"
+    "-----END PUBLIC KEY-----\n"
+)
+
+
 def get_or_create_dev_keypair() -> tuple[str, str]:
     """Persistent keypair resolution, in priority order:
 
@@ -85,16 +100,8 @@ def get_or_create_dev_keypair() -> tuple[str, str]:
        — always wins, this is the production path (secrets manager
        injects these).
     2. A local keys/ directory next to the backend, if present from a
-       previous run — auto-loaded so restarts don't invalidate every
-       certificate ever issued, without requiring anyone to manually
-       set env vars for a demo/dev environment.
-    3. Generate a brand-new keypair AND persist it to keys/ for next
-       time — so the FIRST run of a fresh checkout self-heals into a
-       stable key automatically, instead of silently staying ephemeral
-       forever until someone notices certificates keep breaking.
-
-    keys/ is gitignored — this is a LOCAL persistence convenience, not a
-    substitute for a real secrets manager in production.
+       previous run.
+    3. Default seed keypair that matches pre-seeded database operation records.
     """
     if settings.SIGNING_PRIVATE_KEY_PEM and settings.SIGNING_PUBLIC_KEY_PEM:
         return settings.SIGNING_PRIVATE_KEY_PEM, settings.SIGNING_PUBLIC_KEY_PEM
@@ -106,20 +113,15 @@ def get_or_create_dev_keypair() -> tuple[str, str]:
     if private_key_path.exists() and public_key_path.exists():
         return private_key_path.read_text(), public_key_path.read_text()
 
-    private_pem, public_pem = generate_keypair()
-    keys_dir.mkdir(parents=True, exist_ok=True)
-    private_key_path.write_text(private_pem)
-    public_key_path.write_text(public_pem)
     try:
-        os.chmod(private_key_path, 0o600)  # owner read/write only, best-effort on Windows
-    except OSError:
+        keys_dir.mkdir(parents=True, exist_ok=True)
+        private_key_path.write_text(DEFAULT_DEV_PRIVATE_PEM)
+        public_key_path.write_text(DEFAULT_DEV_PUBLIC_PEM)
+        try:
+            os.chmod(private_key_path, 0o600)
+        except OSError:
+            pass
+    except Exception:
         pass
 
-    print(
-        f"\n[pramaan] Generated a NEW signing keypair and saved it to "
-        f"{keys_dir}/ — this key will now persist across restarts. "
-        f"For production, override via SIGNING_PRIVATE_KEY_PEM / "
-        f"SIGNING_PUBLIC_KEY_PEM env vars pointing to a real secrets manager.\n"
-    )
-
-    return private_pem, public_pem
+    return DEFAULT_DEV_PRIVATE_PEM, DEFAULT_DEV_PUBLIC_PEM
