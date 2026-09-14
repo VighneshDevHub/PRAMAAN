@@ -226,14 +226,14 @@ def generate_operation_pdf(record: dict, session=None) -> bytes:
     text_x = margin + logo_w + 4 * mm if has_logo else margin
 
     c.setFillColor(colors.HexColor("#F59E0B"))
-    c.setFont("Helvetica-Bold", 8)
+    c.setFont("Helvetica-Bold", 8.5)
     c.drawString(text_x, PAGE_HEIGHT - 10 * mm, "GOVERNMENT OF INDIA  |  NATIONAL TECHNICAL RESEARCH ORGANISATION")
 
     c.setFillColor(colors.white)
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(text_x, PAGE_HEIGHT - 19 * mm, f"PRAMAAN — {title}")
-    c.setFont("Helvetica", 8)
-    c.drawString(text_x, PAGE_HEIGHT - 28 * mm, header_subtitle)
+    c.setFont("Helvetica-Bold", 15)
+    c.drawString(text_x, PAGE_HEIGHT - 18.5 * mm, f"PRAMAAN — {title}")
+    c.setFont("Helvetica", 8.5)
+    c.drawString(text_x, PAGE_HEIGHT - 26.5 * mm, header_subtitle)
 
     y = PAGE_HEIGHT - header_height - 9 * mm
     c.setFillColor(colors.black)
