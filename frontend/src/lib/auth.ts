@@ -1,31 +1,73 @@
 import { getApiBaseUrl } from "./config";
 
 const TOKEN_KEY = "pramaan_token";
-
 const EMAIL_KEY = "pramaan_email";
 const ROLE_KEY = "pramaan_role";
 const USER_ID_KEY = "pramaan_user_id";
 
+export function clearSession(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(EMAIL_KEY);
+  localStorage.removeItem(ROLE_KEY);
+  localStorage.removeItem(USER_ID_KEY);
+  localStorage.removeItem("forensicguard_token");
+  localStorage.removeItem("forensicguard_email");
+  localStorage.removeItem("forensicguard_role");
+  localStorage.removeItem("forensicguard_user_id");
+}
+
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(TOKEN_KEY) ?? localStorage.getItem("forensicguard_token");
+  const token =
+    localStorage.getItem(TOKEN_KEY) ??
+    localStorage.getItem("forensicguard_token");
+  if (!token) return null;
+
+  try {
+    const parts = token.split(".");
+    if (parts.length === 3) {
+      const base64Url = parts[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join(""),
+      );
+      const payload = JSON.parse(jsonPayload);
+      if (payload && typeof payload.exp === "number") {
+        if (payload.exp * 1000 <= Date.now()) {
+          clearSession();
+          return null;
+        }
+      }
+    }
+  } catch {
+    clearSession();
+    return null;
+  }
+
+  return token;
 }
 
 export function getStoredEmail(): string | null {
   if (typeof window === "undefined") return null;
+  if (!getToken()) return null;
   return localStorage.getItem(EMAIL_KEY) ?? localStorage.getItem("forensicguard_email");
 }
 
 export function getStoredRole(): string | null {
   if (typeof window === "undefined") return null;
+  if (!getToken()) return null;
   return localStorage.getItem(ROLE_KEY) ?? localStorage.getItem("forensicguard_role");
 }
 
 export function getStoredUserId(): string | null {
   if (typeof window === "undefined") return null;
+  if (!getToken()) return null;
   return localStorage.getItem(USER_ID_KEY) ?? localStorage.getItem("forensicguard_user_id");
 }
-
 
 function setSession(
   token: string,
@@ -33,17 +75,11 @@ function setSession(
   role?: string,
   userId?: string,
 ): void {
+  clearSession();
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(EMAIL_KEY, email);
   if (role) localStorage.setItem(ROLE_KEY, role);
   if (userId) localStorage.setItem(USER_ID_KEY, userId);
-}
-
-export function clearSession(): void {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(EMAIL_KEY);
-  localStorage.removeItem(ROLE_KEY);
-  localStorage.removeItem(USER_ID_KEY);
 }
 
 export class AuthError extends Error {}
