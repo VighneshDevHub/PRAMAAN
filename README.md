@@ -1096,6 +1096,7 @@ All tests use file-based targets only — no real hardware required. Cross-platf
 - [x] File/folder eraser (3-pass + metadata scrubbing)
 - [x] Recovery engine (signature carving + confidence scoring)
 - [x] All three engines run in-process (no separate agent required)
+- [x] Standalone Windows Desktop Application (Tauri 2.0 + PyInstaller sidecar)
 - [x] Analytics dashboard with 30-day timeseries
 - [x] Docker Compose full-stack deployment
 
