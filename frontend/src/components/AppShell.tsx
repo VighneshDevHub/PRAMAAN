@@ -12,10 +12,15 @@ import { formatIndianDateTime } from "@/lib/formatters";
 
 type NavSection = {
   heading: string;
+  headingColor?: string;
+  categoryTag?: string;
+  tagClass?: string;
   items: {
     href: string;
     label: string;
     icon: React.ReactNode;
+    badge?: string;
+    badgeClass?: string;
     matchPrefix?: boolean;
     /** Restrict to these roles — undefined = all roles visible. */
     roles?: UserRole[];
@@ -281,20 +286,24 @@ export function AppShell({
 
   const nav = useMemo<NavSection[]>(() => [
     {
-      heading: "Operations",
+      heading: "Investigation",
       items: [
         { href: "/dashboard", label: "Dashboard", icon: I.Dashboard },
-        { href: "/dashboard/recovery", label: "Recovery Engine", icon: I.Folder, matchPrefix: false, roles: ["ADMINISTRATOR", "INVESTIGATOR", "SUPERVISOR"] },
-        { href: "/dashboard/file-eraser", label: "File / Folder Eraser", icon: I.FileText, matchPrefix: false, roles: ["ADMINISTRATOR", "INVESTIGATOR", "SUPERVISOR"] },
-        { href: "/dashboard/drive-eraser", label: "Drive Eraser", icon: I.Drive, matchPrefix: false, roles: ["ADMINISTRATOR", "INVESTIGATOR", "SUPERVISOR"] },
-        { href: "/dashboard/jobs", label: "Task Queue", icon: I.Clipboard, roles: ["ADMINISTRATOR", "INVESTIGATOR", "SUPERVISOR", "AUDITOR"] },
-        { href: "/dashboard/devices", label: "Device Inventory", icon: I.Drive },
         { href: "/dashboard/cases", label: "Cases", icon: I.Folder },
-        { href: "/dashboard/manual", label: "User Manual", icon: I.Book },
+        { href: "/dashboard/devices", label: "Device Inventory", icon: I.Drive },
       ],
     },
     {
-      heading: "Forensics",
+      heading: "Forensic Toolkit",
+      items: [
+        { href: "/dashboard/recovery", label: "Recovery Engine", icon: I.Folder, matchPrefix: false, roles: ["ADMINISTRATOR", "INVESTIGATOR", "SUPERVISOR"] },
+        { href: "/dashboard/file-eraser", label: "File / Folder Eraser", icon: I.FileText, matchPrefix: false, roles: ["ADMINISTRATOR", "INVESTIGATOR", "SUPERVISOR"] },
+        { href: "/dashboard/drive-eraser", label: "Drive Eraser", icon: I.Drive, matchPrefix: false, roles: ["ADMINISTRATOR", "INVESTIGATOR", "SUPERVISOR"] },
+        { href: "/dashboard/jobs", label: "Task Queue", icon: I.Clipboard, roles: ["ADMINISTRATOR", "INVESTIGATOR", "SUPERVISOR", "AUDITOR"], badge: "LIVE", badgeClass: "bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950 dark:text-emerald-200" },
+      ],
+    },
+    {
+      heading: "Evidence & Audit",
       items: [
         { href: "/dashboard/ledger", label: "Hash Chain Ledger", icon: I.Chain },
         { href: "/dashboard/reports", label: "Report Center", icon: I.FileText },
@@ -307,6 +316,7 @@ export function AppShell({
         { href: "/dashboard/users", label: "Operators", icon: I.Users, roles: ["ADMINISTRATOR"] },
         { href: "/dashboard/system-logs", label: "System Logs", icon: I.ListLogs, roles: ["ADMINISTRATOR", "AUDITOR", "SUPERVISOR"] },
         { href: "/dashboard/settings", label: "Settings", icon: I.Cog, roles: ["ADMINISTRATOR"] },
+        { href: "/dashboard/manual", label: "User Manual", icon: I.Book },
       ],
     },
   ], []);
@@ -504,28 +514,37 @@ export function AppShell({
           aria-label="Primary"
         >
           <div className="flex-1 overflow-y-auto pb-6">
-            <div className="px-2 pb-4 pt-1">
-              <p className="px-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
+            <div className="px-3 pb-3 pt-1">
+              <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#003366] !text-[#003366]">
                 PRAMAAN Console
               </p>
             </div>
-            <nav>
-              {nav.map((section) => (
-                <div key={section.heading} className="mb-4">
-                  <p className="px-3 pb-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+            <nav className="space-y-6 px-1">
+              {nav.map((section, idx) => (
+                <div key={section.heading} className={idx > 0 ? "pt-3 border-t border-slate-300" : ""}>
+                  <p className="px-2 pb-2 font-mono text-[11px] font-black uppercase tracking-[0.14em] text-[#003366] !text-[#003366]">
                     {section.heading}
                   </p>
-                  <ul className="space-y-0.5">
+                  <ul className="space-y-1">
                     {section.items.filter((it) => isVisible(it.roles)).map((it) => (
                       <li key={it.href}>
                         <Link
                           href={it.href}
-                          className="fg-nav-item"
+                          className="fg-nav-item group"
                           data-active={isActive(it.href)}
                           onClick={() => setMobileNavOpen(false)}
                         >
-                          <span aria-hidden="true">{it.icon}</span>
-                          <span>{it.label}</span>
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className="shrink-0 text-slate-800 !text-slate-800 transition-colors group-hover:!text-[#003366] group-data-[active=true]:!text-[#003366]" aria-hidden="true">
+                              {it.icon}
+                            </span>
+                            <span className="truncate font-bold text-slate-900 !text-slate-900 group-hover:!text-[#003366] group-data-[active=true]:!text-[#003366]">{it.label}</span>
+                          </div>
+                          {it.badge && (
+                            <span className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[9px] font-extrabold tracking-wider uppercase ${it.badgeClass ?? "bg-emerald-100 text-emerald-950 border border-emerald-300"}`}>
+                              {it.badge}
+                            </span>
+                          )}
                         </Link>
                       </li>
                     ))}

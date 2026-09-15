@@ -209,18 +209,12 @@
   }
 
   .fg-nav-item {
-    @apply flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium
-      text-muted hover:text-main hover:bg-field transition-all duration-150;
+    @apply flex items-center justify-between rounded-md px-3 py-2 text-xs font-bold
+      text-slate-900 hover:text-govt-navy hover:bg-slate-100 border-l-2 border-transparent transition-all duration-150;
   }
 
   .fg-nav-item[data-active="true"] {
-    @apply text-govt-navy bg-govt-blueLight font-semibold;
-  }
-
-  [data-theme="dark"] .fg-nav-item[data-active="true"],
-  .dark .fg-nav-item[data-active="true"],
-  [data-theme="ink-dark"] .fg-nav-item[data-active="true"] {
-    @apply text-white bg-govt-blueDark/60 font-semibold;
+    @apply text-govt-navy bg-govt-blueLight border-govt-blue font-extrabold;
   }
 
   .fg-table {
@@ -274,6 +268,16 @@
 
   .fg-section-anchor {
     scroll-margin-top: 80px;
+  }
+
+  .shadow-xs {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  .backdrop-blur-xs {
+    backdrop-filter: blur(2px);
+  }
+  .rounded-xs {
+    border-radius: 0.125rem;
   }
 }
 

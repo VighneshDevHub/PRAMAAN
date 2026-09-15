@@ -24,6 +24,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "PRAMAAN — Integrated Secure Data Erasure & Digital Forensics Platform",
   description: "National Technical Research Organisation (NTRO) - NIST SP 800-88 Rev. 1 Compliant Data Sanitisation & Forensic Recovery Tool",
+  icons: {
+    icon: "/pramaan-logo.png",
+    shortcut: "/pramaan-logo.png",
+    apple: "/pramaan-logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
