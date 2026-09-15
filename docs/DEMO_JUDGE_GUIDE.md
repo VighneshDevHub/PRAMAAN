@@ -46,7 +46,7 @@ Set-Location "C:\Users\vighn\Desktop\STAY-HARD\SIH 2026\SAKSHYA\frontend"
 npm run dev
 ```
 
-Open `http://localhost:3000` and log in with a valid email domain, for example `investigator@ntro.gov.in`. Public registration currently allows selecting a role for demonstration purposes.
+Open `http://localhost:3000` and log in with a valid email domain, for example `investigator@ntro.com`. Public registration currently allows selecting a role for demonstration purposes.
 
 ## 3. Ten-Minute Judge Flow
 

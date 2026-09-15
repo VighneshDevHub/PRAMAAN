@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="../logo2.png" alt="NTRO PRAMAAN Logo" width="280" />
+
 # PRAMAAN — Backend API
 
 **FastAPI · Python 3.12 · SQLAlchemy 2.0 · PostgreSQL / SQLite**

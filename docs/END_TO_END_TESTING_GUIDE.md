@@ -63,7 +63,7 @@ Register through `http://localhost:3000/login` or Swagger `POST /api/v1/auth/reg
 | Account | Password | Role |
 |---|---|---|
 | `admin@ntro.gov.in` | `Admin@1234` | Administrator |
-| `investigator@ntro.gov.in` | `Invest@1234` | Investigator |
+| `investigator@ntro.com` | `Invest@1234` | Investigator |
 | `auditor@ntro.gov.in` | `Audit@1234` | Auditor |
 | `supervisor@ntro.gov.in` | `Super@1234` | Supervisor |
 

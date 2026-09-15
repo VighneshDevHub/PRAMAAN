@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="../logo2.png" alt="NTRO PRAMAAN Logo" width="280" />
+
 # PRAMAAN — Frontend Dashboard
 
 **Next.js 14 · TypeScript 5.5 · Tailwind CSS · Government Design System**
