@@ -525,14 +525,21 @@ export default function LandingPage() {
             </div>
 
             {/* PRAMAAN Brand Header */}
-            <div className="space-y-2">
-              <div className="flex flex-wrap items-baseline gap-3">
-                <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-govt-navy">
-                  PRAMAAN
-                </h1>
-                <span className="font-mono text-2xl md:text-3xl font-bold tracking-widest text-govt-goldDark uppercase border-l-2 border-govt-gold/60 pl-3">
-                  प्रमाण
-                </span>
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-4">
+                <img
+                  src="/pramaan-logo.png"
+                  alt="PRAMAAN Emblem"
+                  className="h-14 md:h-16 lg:h-20 w-auto shrink-0 drop-shadow-md transition-transform hover:scale-105"
+                />
+                <div className="flex flex-wrap items-baseline gap-3">
+                  <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-govt-navy">
+                    PRAMAAN
+                  </h1>
+                  <span className="font-mono text-2xl md:text-3xl font-bold tracking-widest text-govt-goldDark uppercase border-l-2 border-govt-gold/60 pl-3">
+                    प्रमाण
+                  </span>
+                </div>
               </div>
               <p className="text-lg md:text-xl font-semibold text-govt-navy/90 tracking-wide font-display">
                 Integrated Secure Data Sanitisation &amp; Digital Forensic Recovery Platform
