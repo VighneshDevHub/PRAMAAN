@@ -47,7 +47,6 @@ interface FeatureItem {
   badgeBg: string;
   gradient: string;
   icon: React.ReactNode;
-  visualWidget: React.ReactNode;
 }
 
 const FEATURES: FeatureItem[] = [
@@ -66,21 +65,6 @@ const FEATURES: FeatureItem[] = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
       </svg>
     ),
-    visualWidget: (
-      <div className="mt-4 rounded-xl bg-slate-900 text-white p-3 font-mono text-[10px] space-y-1.5 border border-slate-800">
-        <div className="flex justify-between text-slate-400">
-          <span>SECTOR WIPE (NVMe)</span>
-          <span className="text-emerald-400 font-bold">100% READ-BACK</span>
-        </div>
-        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-500 to-emerald-400 h-full w-[98.4%]" />
-        </div>
-        <div className="flex justify-between text-[9px] text-slate-400">
-          <span>LBA: 0x0000 -&gt; 0xFFFF</span>
-          <span className="text-sky-300">540 MB/s DMA</span>
-        </div>
-      </div>
-    ),
   },
   {
     id: "MOD-02",
@@ -96,22 +80,6 @@ const FEATURES: FeatureItem[] = [
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
       </svg>
-    ),
-    visualWidget: (
-      <div className="mt-4 rounded-xl bg-slate-900 text-white p-3 font-mono text-[10px] space-y-1.5 border border-slate-800">
-        <div className="flex justify-between text-slate-400">
-          <span>INODE SCRUBBING</span>
-          <span className="text-indigo-400 font-bold">NTFS $MFT</span>
-        </div>
-        <div className="bg-slate-950 p-1.5 rounded border border-slate-800 text-[9px] text-slate-300 flex justify-between">
-          <span>0x0000: 00 00 00 00 00</span>
-          <span className="text-emerald-400">OVERWRITTEN</span>
-        </div>
-        <div className="flex justify-between text-[9px] text-slate-400">
-          <span>Free-Space Sanitised</span>
-          <span className="text-indigo-300">DoD 7-Pass</span>
-        </div>
-      </div>
     ),
   },
   {
@@ -129,22 +97,6 @@ const FEATURES: FeatureItem[] = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
       </svg>
     ),
-    visualWidget: (
-      <div className="mt-4 rounded-xl bg-slate-900 text-white p-3 font-mono text-[10px] space-y-1.5 border border-slate-800">
-        <div className="flex justify-between text-slate-400">
-          <span>CARVING ENGINE</span>
-          <span className="text-sky-400 font-bold">99.4% MATCH</span>
-        </div>
-        <div className="bg-slate-950 p-1.5 rounded border border-slate-800 text-[9px] text-slate-300 flex justify-between">
-          <span>JPEG Header: \xFF\xD8\xFF</span>
-          <span className="text-sky-300">ISO 27037</span>
-        </div>
-        <div className="flex justify-between text-[9px] text-slate-400">
-          <span>24 Files Reconstructed</span>
-          <span className="text-emerald-400">Sealed</span>
-        </div>
-      </div>
-    ),
   },
   {
     id: "MOD-04",
@@ -160,21 +112,6 @@ const FEATURES: FeatureItem[] = [
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
       </svg>
-    ),
-    visualWidget: (
-      <div className="mt-4 rounded-xl bg-slate-900 text-white p-3 font-mono text-[10px] space-y-1.5 border border-slate-800">
-        <div className="flex justify-between text-slate-400">
-          <span>SHA-256 CHAIN</span>
-          <span className="text-amber-400 font-bold">BLOCK #4092</span>
-        </div>
-        <div className="bg-slate-950 p-1.5 rounded border border-slate-800 text-[9px] text-slate-300 font-mono truncate">
-          hash: e3b0c44298fc1c14...
-        </div>
-        <div className="flex justify-between text-[9px] text-slate-400">
-          <span>ECDSA P-256 Signed</span>
-          <span className="text-emerald-400">QR Valid</span>
-        </div>
-      </div>
     ),
   },
   {
@@ -192,22 +129,6 @@ const FEATURES: FeatureItem[] = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
       </svg>
     ),
-    visualWidget: (
-      <div className="mt-4 rounded-xl bg-slate-900 text-white p-3 font-mono text-[10px] space-y-1.5 border border-slate-800">
-        <div className="flex justify-between text-slate-400">
-          <span>CHAIN-OF-CUSTODY</span>
-          <span className="text-emerald-400 font-bold">ACTIVE CASE</span>
-        </div>
-        <div className="bg-slate-950 p-1.5 rounded border border-slate-800 text-[9px] text-slate-300 flex justify-between">
-          <span>CASE #2026-DFU-042</span>
-          <span className="text-emerald-400">Audited</span>
-        </div>
-        <div className="flex justify-between text-[9px] text-slate-400">
-          <span>Lead: OP-9042</span>
-          <span className="text-emerald-300">Cert PDF</span>
-        </div>
-      </div>
-    ),
   },
   {
     id: "MOD-06",
@@ -223,21 +144,6 @@ const FEATURES: FeatureItem[] = [
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
       </svg>
-    ),
-    visualWidget: (
-      <div className="mt-4 rounded-xl bg-slate-900 text-white p-3 font-mono text-[10px] space-y-1.5 border border-slate-800">
-        <div className="flex justify-between text-slate-400">
-          <span>SYSTEM SECURITY</span>
-          <span className="text-purple-400 font-bold">4-TIER RBAC</span>
-        </div>
-        <div className="bg-slate-950 p-1.5 rounded border border-slate-800 text-[9px] text-slate-300 flex justify-between">
-          <span>ADMIN · SUPERVISOR · AUDITOR</span>
-        </div>
-        <div className="flex justify-between text-[9px] text-slate-400">
-          <span>Tamper Detection</span>
-          <span className="text-emerald-400">Log Integrity OK</span>
-        </div>
-      </div>
     ),
   },
 ];
@@ -502,62 +408,6 @@ const FAQS: FaqItem[] = [
   },
 ];
 
-interface DemoCert {
-  id: string;
-  type: string;
-  module: string;
-  primitive: string;
-  target: string;
-  operator: string;
-  sha256: string;
-  ecdsaKey: string;
-  blockIndex: number;
-  timestamp: string;
-  verificationStatus: string;
-}
-
-const DEMO_CERTS: DemoCert[] = [
-  {
-    id: "CERT-2026-NIST-8821",
-    type: "Hardware Storage Sanitisation",
-    module: "Drive Eraser (MOD-01)",
-    primitive: "NIST SP 800-88 Purge (3-Pass)",
-    target: "Samsung NVMe SSD 1TB (/dev/nvme0n1)",
-    operator: "OP-9042 (Lead Forensic Investigator)",
-    sha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    ecdsaKey: "04a1f89c2d76e4...e810a9b",
-    blockIndex: 4092,
-    timestamp: "2026-09-14 15:42:01 UTC",
-    verificationStatus: "VALIDATED · IMMUTABLE",
-  },
-  {
-    id: "CERT-2026-ISO-3049",
-    type: "Digital Forensic Evidence Seal",
-    module: "File Recovery (MOD-03)",
-    primitive: "ISO 27037 Carving & Digest",
-    target: "Carved Partition Dump (24 Files Recovered)",
-    operator: "OP-4102 (Digital Evidence Custodian)",
-    sha256: "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4",
-    ecdsaKey: "04b2c781d45a90...f9011c3",
-    blockIndex: 4093,
-    timestamp: "2026-09-14 15:50:18 UTC",
-    verificationStatus: "VALIDATED · IMMUTABLE",
-  },
-  {
-    id: "CERT-2026-DOD-1094",
-    type: "Targeted Logical Erasure",
-    module: "File & Folder Eraser (MOD-02)",
-    primitive: "DoD 5220.22-M 7-Pass Overwrite",
-    target: "Classified Directory & NTFS Inodes",
-    operator: "OP-1088 (System Administrator)",
-    sha256: "d41d8cd98f00b204e9800998ecf8427e00000000000000000000000000000000",
-    ecdsaKey: "04c3d902e88b12...a1022d4",
-    blockIndex: 4094,
-    timestamp: "2026-09-14 16:01:45 UTC",
-    verificationStatus: "VALIDATED · IMMUTABLE",
-  },
-];
-
 // ==================================================================== page
 export default function LandingPage() {
   const [stats, setStats] = useState<PublicStatsOut | null>({
@@ -570,10 +420,6 @@ export default function LandingPage() {
   const [faqCategory, setFaqCategory] = useState<"all" | "verification" | "hardware" | "security">("all");
   const [faqSearch, setFaqSearch] = useState<string>("");
   const [openFaqId, setOpenFaqId] = useState<string | null>("FAQ-01");
-
-  const [selectedCertIndex, setSelectedCertIndex] = useState<number>(0);
-  const [isVerifyingDemo, setIsVerifyingDemo] = useState<boolean>(false);
-  const [demoVerifiedText, setDemoVerifiedText] = useState<string | null>(null);
 
   const filteredFaqs = FAQS.filter((f) => {
     const matchesCategory = faqCategory === "all" || f.category === faqCategory;
@@ -605,24 +451,40 @@ export default function LandingPage() {
 
       {/* ========================================================== NAV */}
       <header className="sticky top-0 z-40 border-b border-line bg-panel/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3 md:px-8">
-          <Link href="/" className="inline-flex items-center gap-3">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-5 py-2.5 md:px-8">
+          <Link href="/" className="inline-flex items-center gap-3 shrink-0">
             <NtroGovernmentLogo variant="header" showSubtitle={true} />
           </Link>
-          <nav className="hidden flex-wrap items-center gap-5 md:flex text-sm">
-            <a href="#features" className="text-main hover:text-govt-navy">Features</a>
-            <a href="#architecture" className="text-main hover:text-govt-navy">Architecture</a>
-            <a href="#standards" className="text-main hover:text-govt-navy">Standards</a>
-            <a href="#workflow" className="text-main hover:text-govt-navy">Workflow</a>
-            <a href="#faq" className="text-main hover:text-govt-navy">FAQ</a>
-            <a href="/verify" className="text-main hover:text-govt-navy">Verify Certificate</a>
-            <Link href="/dashboard/manual" className="text-main hover:text-govt-navy">User Manual</Link>
+          <nav className="hidden items-center justify-center gap-6 xl:gap-8 lg:flex text-xs xl:text-sm font-semibold flex-1 px-4">
+            <a href="#features" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">Features</a>
+            <a href="#architecture" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">Architecture</a>
+            <a href="#standards" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">Standards</a>
+            <a href="#workflow" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">Workflow</a>
+            <a href="#faq" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">FAQ</a>
+            <Link href="/dashboard/manual" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">User Manual</Link>
           </nav>
-          <div className="flex items-center gap-2">
-            <Link href="/verify" className="fg-btn !py-1.5 !px-3 text-xs hidden sm:inline-flex">
-              Verify
+          <div className="flex items-center gap-2.5 shrink-0">
+            <a
+              href="/downloads/PRAMAAN_Desktop_Setup.exe"
+              download
+              className="inline-flex items-center gap-1.5 rounded-md border border-govt-gold/60 bg-govt-goldLight px-3 py-1.5 text-xs font-bold text-govt-navy hover:bg-govt-goldDark hover:text-white transition-colors shadow-2xs whitespace-nowrap"
+              title="Download PRAMAAN Native Desktop App (.exe)"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span>Download Desktop App</span>
+            </a>
+            <Link
+              href="/verify"
+              className="inline-flex items-center gap-1.5 rounded-md border border-line bg-white hover:bg-field px-3 py-1.5 text-xs font-semibold text-govt-navy transition-colors shadow-2xs whitespace-nowrap"
+            >
+              <svg className="w-3.5 h-3.5 text-govt-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <span>Verify</span>
             </Link>
-            <Link href="/login" className="fg-btn-primary !py-1.5 !px-3 text-xs">
+            <Link href="/login" className="fg-btn-primary !py-1.5 !px-3.5 text-xs whitespace-nowrap">
               Operator Sign In
             </Link>
           </div>
@@ -632,198 +494,101 @@ export default function LandingPage() {
       {/* ========================================================== HERO */}
       <section
         id="hero"
-        className="relative overflow-hidden bg-[#F4F7FA] text-main border-b border-line flex flex-col justify-between min-h-[520px] md:min-h-[580px]"
+        className="relative overflow-hidden bg-[#F4F7FA] text-main border-b border-line flex flex-col justify-between min-h-[540px] lg:min-h-[calc(100vh-105px)]"
       >
-        {/* Government Forensics Hero Background Image - 100% Fitted Edge-to-Edge */}
+        {/* Government Forensics Hero Background Image - 100% Cover Edge-to-Edge */}
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-no-repeat pointer-events-none opacity-95"
           style={{
             backgroundImage: "url('/bg.png')",
-            backgroundSize: "100% 100%",
-            backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundPosition: "center right",
           }}
         />
 
         {/* Soft Scrim Gradient - Left Side Only for Crisp Text Legibility */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/45 to-transparent pointer-events-none w-full md:w-2/3 lg:w-[50%]"
+          className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/60 to-transparent pointer-events-none w-full lg:w-[60%]"
         />
 
         {/* Hero Main Content Area */}
-        <div className="relative mx-auto max-w-7xl px-5 pt-8 pb-12 md:px-8 md:pt-12 md:pb-16 w-full">
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
-            {/* Left Column: Text & CTA */}
-            <div className="lg:col-span-6">
-              {/* Government Mandate Badge */}
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-govt-gold/60 bg-govt-goldLight/90 px-3.5 py-1.5 shadow-xs backdrop-blur-xs">
-                <span className="inline-block h-2 w-2 rounded-full bg-govt-goldDark animate-pulse" />
-                <span className="font-mono text-[10px] md:text-[11px] font-bold uppercase tracking-[0.18em] text-govt-navy">
-                  GOVT OF INDIA · NTRO · PROBLEM STATEMENT ID 26149
-                </span>
-              </div>
-
-              {/* PRAMAAN Brand Header */}
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-baseline gap-3">
-                  <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-govt-navy">
-                    PRAMAAN
-                  </h1>
-                  <span className="font-mono text-xl sm:text-2xl md:text-3xl font-bold tracking-widest text-govt-goldDark uppercase border-l-2 border-govt-gold/60 pl-3">
-                    प्रमाण
-                  </span>
-                </div>
-                <p className="text-base sm:text-lg md:text-xl font-semibold text-govt-navy/90 tracking-wide font-display">
-                  Integrated Secure Data Sanitisation &amp; Digital Forensic Recovery Platform
-                </p>
-              </div>
-
-              {/* Core Value Statement */}
-              <p className="mt-4 text-xs sm:text-sm md:text-base leading-relaxed text-muted font-medium">
-                Engineered for defense, intelligence, and law enforcement agencies to execute NIST SP 800-88 Rev. 1 compliant drive erasures, selective file destruction, and forensic file carving — sealed with an immutable SHA-256 hash-chain and ECDSA signatures.
-              </p>
-
-              {/* Platform Badges */}
-              <div className="mt-5 flex flex-wrap items-center gap-2 text-[10px] sm:text-[11px] font-mono">
-                <span className="bg-govt-blueLight text-govt-navy px-2.5 py-1 rounded border border-govt-blueRing font-semibold">NIST SP 800-88 REV. 1</span>
-                <span className="bg-white/90 text-main px-2.5 py-1 rounded border border-line font-medium shadow-2xs">ISO 27037 FORENSIC SEAL</span>
-                <span className="bg-white/90 text-main px-2.5 py-1 rounded border border-line font-medium shadow-2xs">DoD 5220.22-M</span>
-                <span className="bg-govt-goldLight text-govt-navy px-2.5 py-1 rounded border border-govt-gold/40 font-bold">ECDSA P-256 ANCHORED</span>
-              </div>
-
-              {/* Call to Action Buttons */}
-              <div className="mt-7 flex flex-wrap items-center gap-3 sm:gap-4">
-                <Link
-                  href="/login"
-                  className="inline-flex items-center gap-2 rounded-lg bg-govt-navy hover:bg-govt-blueDark text-white font-bold px-5 py-3 text-xs sm:text-sm transition-all shadow-md hover:shadow-lg hover:scale-[1.01]"
-                >
-                  <span>Access Operator Console</span>
-                  <span className="text-base sm:text-lg">→</span>
-                </Link>
-                <Link
-                  href="/verify"
-                  className="inline-flex items-center gap-2 rounded-lg bg-white hover:bg-field text-govt-navy border border-line font-semibold px-5 py-3 text-xs sm:text-sm transition-all shadow-xs"
-                >
-                  <span>Verify Certificate</span>
-                  <svg className="w-4 h-4 text-govt-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </Link>
-                <Link
-                  href="/dashboard/manual"
-                  className="inline-flex items-center gap-2 rounded-lg bg-white/70 hover:bg-white text-muted hover:text-govt-navy font-medium px-4 py-3 text-xs sm:text-sm transition-all border border-line/50"
-                >
-                  <span>User Manual</span>
-                  <svg className="w-4 h-4 text-govt-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </Link>
-              </div>
+        <div className="relative mx-auto max-w-[1440px] px-5 pt-8 pb-10 md:px-8 lg:px-12 md:pt-12 md:pb-14 w-full flex-1 flex flex-col justify-center">
+          <div className="max-w-xl lg:max-w-2xl">
+            {/* Government Mandate Badge */}
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-govt-gold/60 bg-govt-goldLight/90 px-4 py-1.5 shadow-xs backdrop-blur-xs">
+              <span className="inline-block h-2 w-2 rounded-full bg-govt-goldDark animate-pulse" />
+              <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-govt-navy">
+                GOVT OF INDIA · NTRO · PROBLEM STATEMENT ID 26149
+              </span>
             </div>
 
-            {/* Right Column: Live Telemetry Terminal Visual Card (Hero Graphic) */}
-            <div className="lg:col-span-6">
-              <div className="rounded-2xl border border-slate-700/80 bg-slate-950 text-slate-100 shadow-2xl p-4 sm:p-5 font-mono relative overflow-hidden">
-                {/* Glow Background */}
-                <div className="absolute -top-12 -right-12 w-48 h-48 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
-                <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-
-                {/* Window Header Bar */}
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-red-500/80" />
-                    <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
-                    <div className="h-3 w-3 rounded-full bg-emerald-500/80" />
-                    <span className="ml-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                      CLI AGENT TELEMETRY · LIVE DISK WIPER
-                    </span>
-                  </div>
-                  <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    TASK #WIPE-8821
-                  </span>
-                </div>
-
-                {/* Terminal Content Body */}
-                <div className="space-y-4 text-xs">
-                  {/* Top Stats Strip */}
-                  <div className="grid grid-cols-3 gap-2 bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 text-[10px]">
-                    <div>
-                      <div className="text-slate-400">TARGET DISK</div>
-                      <div className="text-white font-bold truncate">/dev/nvme0n1</div>
-                    </div>
-                    <div>
-                      <div className="text-slate-400">PRIMITIVE</div>
-                      <div className="text-amber-400 font-bold">NIST PURGE (3-PASS)</div>
-                    </div>
-                    <div>
-                      <div className="text-slate-400">VERIFICATION</div>
-                      <div className="text-emerald-400 font-bold">100% READ-BACK</div>
-                    </div>
-                  </div>
-
-                  {/* Sector Grid Visualization (6x6 Sector Map) */}
-                  <div>
-                    <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1.5">
-                      <span>HARDWARE SECTOR BLOCK MAP (LBA 0 - 1,953,525,167)</span>
-                      <span className="text-emerald-400 font-bold">98.4% VERIFIED</span>
-                    </div>
-                    <div className="grid grid-cols-12 gap-1 bg-slate-900 p-2 rounded-xl border border-slate-800">
-                      {Array.from({ length: 36 }).map((_, idx) => {
-                        const isVerified = idx < 32;
-                        const isActive = idx === 32 || idx === 33;
-                        return (
-                          <div
-                            key={idx}
-                            className={`h-3 rounded-xs transition-colors ${
-                              isVerified
-                                ? "bg-emerald-500/80 shadow-[0_0_5px_rgba(16,185,129,0.5)]"
-                                : isActive
-                                ? "bg-blue-400 animate-pulse shadow-[0_0_8px_rgba(96,165,250,0.8)]"
-                                : "bg-slate-800"
-                            }`}
-                            title={`Sector Block ${idx + 1}`}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Cryptographic Hash Stream Log */}
-                  <div className="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5 text-[10px] leading-tight">
-                    <div className="text-slate-400 flex items-center justify-between">
-                      <span>SHA-256 LEDGER BLOCK #4092</span>
-                      <span className="text-emerald-400">STATUS: SEALED</span>
-                    </div>
-                    <div className="text-slate-300 font-mono break-all bg-slate-950 p-2 rounded border border-slate-800/80 text-[9px]">
-                      digest: <span className="text-emerald-300">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</span>
-                    </div>
-                    <div className="flex items-center justify-between text-slate-400 text-[10px] pt-1">
-                      <span className="text-sky-300">ECDSA P-256 Operator Signature Validated</span>
-                      <span className="text-slate-500">100% Bit-Exact Match</span>
-                    </div>
-                  </div>
-
-                  {/* Terminal Live Output Line */}
-                  <div className="flex items-center justify-between text-[10px] bg-slate-900/60 p-2 rounded-lg border border-slate-800/80">
-                    <div className="flex items-center gap-2 truncate">
-                      <span className="text-emerald-400 font-bold">SUCCESS:</span>
-                      <span className="text-slate-300 truncate">Certificate PDF generated &amp; anchored to chain</span>
-                    </div>
-                    <span className="text-slate-500 shrink-0">16:09:05 UTC</span>
-                  </div>
-                </div>
+            {/* PRAMAAN Brand Header */}
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-baseline gap-3">
+                <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-govt-navy">
+                  PRAMAAN
+                </h1>
+                <span className="font-mono text-2xl md:text-3xl font-bold tracking-widest text-govt-goldDark uppercase border-l-2 border-govt-gold/60 pl-3">
+                  प्रमाण
+                </span>
               </div>
+              <p className="text-lg md:text-xl font-semibold text-govt-navy/90 tracking-wide font-display">
+                Integrated Secure Data Sanitisation &amp; Digital Forensic Recovery Platform
+              </p>
+            </div>
+
+            {/* Core Value Statement */}
+            <p className="mt-5 max-w-xl text-sm md:text-base leading-relaxed text-muted font-medium">
+              Engineered for defense, intelligence, and law enforcement agencies to execute NIST SP 800-88 Rev. 1 compliant drive erasures, selective file destruction, and forensic file carving — sealed with an immutable SHA-256 hash-chain and ECDSA signatures.
+            </p>
+
+            {/* Platform Badges */}
+            <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-mono">
+              <span className="bg-govt-blueLight text-govt-navy px-2.5 py-1 rounded border border-govt-blueRing font-semibold">NIST SP 800-88 REV. 1</span>
+              <span className="bg-white/90 text-main px-2.5 py-1 rounded border border-line font-medium shadow-2xs">ISO 27037 FORENSIC SEAL</span>
+              <span className="bg-white/90 text-main px-2.5 py-1 rounded border border-line font-medium shadow-2xs">DoD 5220.22-M</span>
+              <span className="bg-govt-goldLight text-govt-navy px-2.5 py-1 rounded border border-govt-gold/40 font-bold">ECDSA P-256 ANCHORED</span>
+            </div>
+
+            {/* Call to Action Buttons - 3 Buttons Strictly in One Line */}
+            <div className="mt-8 flex items-center gap-3 md:gap-4 overflow-x-auto no-scrollbar whitespace-nowrap">
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 rounded-lg bg-govt-navy hover:bg-govt-blueDark text-white font-bold px-5 py-3 text-sm transition-all shadow-md hover:shadow-lg hover:scale-[1.01] shrink-0"
+              >
+                <span>Access Operator Console</span>
+                <span className="text-lg">→</span>
+              </Link>
+              <a
+                href="/downloads/PRAMAAN_Desktop_Setup.exe"
+                download
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold px-5 py-3 text-sm transition-all shadow-md hover:shadow-lg hover:scale-[1.01] shrink-0"
+              >
+                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>Download Desktop App</span>
+              </a>
+              <Link
+                href="/verify"
+                className="inline-flex items-center gap-2 rounded-lg bg-white hover:bg-field text-govt-navy border border-line font-semibold px-5 py-3 text-sm transition-all shadow-xs shrink-0"
+              >
+                <span>Verify Certificate</span>
+                <svg className="w-4 h-4 text-govt-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </Link>
             </div>
           </div>
         </div>
 
-        {/* Full-Width Government Control Panel Live Stats Bar */}
-        <div className="relative z-10 border-t border-govt-gold/30 bg-govt-navy text-white py-3.5 shadow-lg">
-          <div className="mx-auto max-w-7xl px-5 md:px-8 flex flex-wrap items-center justify-between gap-4">
+        {/* Full Screen Width Edge-to-Edge Government Control Panel Live Stats Bar */}
+        <div className="relative z-10 w-full border-t border-govt-gold/30 bg-govt-navy text-white py-3 shadow-lg">
+          <div className="w-full px-4 md:px-8 xl:px-12 flex items-center justify-between gap-4 overflow-x-auto no-scrollbar whitespace-nowrap">
             {/* Left Group: Live Status + Workspace Title + Sanitisation Primitives */}
-            <div className="flex flex-wrap items-center gap-3 md:gap-4">
+            <div className="flex items-center gap-3 md:gap-5 shrink-0">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-300">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /> Live
               </span>
@@ -837,7 +602,7 @@ export default function LandingPage() {
               </div>
 
               {/* Inline Sanitisation Primitives Badges */}
-              <div className="hidden sm:flex items-center gap-1.5 font-mono text-[10px] border-l border-white/20 pl-3 md:pl-4 ml-1">
+              <div className="hidden sm:flex items-center gap-1.5 font-mono text-[10px] border-l border-white/20 pl-3 md:pl-5 ml-1">
                 <span className="text-white/60 text-[10px] mr-1">Primitives:</span>
                 <span className="bg-white/10 px-2 py-0.5 rounded text-white border border-white/20 font-bold">CLEAR</span>
                 <span className="bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded border border-amber-400/30 font-bold">PURGE</span>
@@ -846,7 +611,7 @@ export default function LandingPage() {
             </div>
 
             {/* Right Group: Metrics Counters */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-8 shrink-0">
+            <div className="flex items-center gap-4 sm:gap-6 md:gap-8 shrink-0">
               <div className="flex items-center gap-2">
                 <div className="font-display text-2xl font-extrabold text-white tabular-nums">
                   {(stats?.operations_count ?? 10).toLocaleString()}
@@ -978,9 +743,6 @@ export default function LandingPage() {
                       </span>
                     ))}
                   </div>
-
-                  {/* Feature Visual Telemetry Widget */}
-                  {f.visualWidget}
                 </div>
 
                 {/* Bottom Interactive Link */}
@@ -1513,264 +1275,6 @@ export default function LandingPage() {
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================== INTERACTIVE LEDGER INSPECTOR */}
-      <section id="ledger-inspector" className="relative border-b border-line bg-white py-20 overflow-hidden">
-        {/* Subtle Ambient Radial Lighting */}
-        <div
-          aria-hidden="true"
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-govt-goldLight/20 rounded-full blur-3xl pointer-events-none -z-10 opacity-70"
-        />
-
-        <div className="relative mx-auto max-w-7xl px-5 md:px-8">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-govt-gold/50 bg-govt-goldLight/80 px-3.5 py-1 text-[11px] font-mono font-bold text-govt-navy uppercase tracking-widest mb-3 shadow-2xs">
-                <span className="h-1.5 w-1.5 rounded-full bg-govt-navy animate-pulse" />
-                INTERACTIVE SHA-256 LEDGER &amp; VERIFICATION DEMO
-              </div>
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-govt-navy">
-                Cryptographic Proof Inspector
-              </h2>
-              <p className="mt-3 text-sm md:text-base leading-relaxed text-slate-600 font-medium">
-                Test how PRAMAAN anchors every operation to an append-only SHA-256 hash-chain ledger signed with ECDSA P-256 operator keys for third-party auditing.
-              </p>
-            </div>
-
-            {/* Verification Badge */}
-            <div className="hidden lg:flex items-center gap-3 bg-slate-50 border border-slate-200/90 rounded-xl p-3 shadow-2xs font-mono text-xs shrink-0">
-              <div className="p-2 bg-govt-navy text-govt-gold rounded-lg">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <div>
-                <div className="text-xs font-bold text-govt-navy">PUBLIC VERIFIER DEMO</div>
-                <div className="text-[10px] text-slate-500">LIVE MERKLE DIGEST VALIDATOR</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Main 3-Column Interactive Demo Visual Container */}
-          <div className="grid gap-6 lg:grid-cols-12">
-            {/* Left Column: Certificate Selector Tabs (4 cols) */}
-            <div className="lg:col-span-4 space-y-3">
-              <div className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                SELECT SAMPLE CERTIFICATE FOR AUDIT:
-              </div>
-
-              {DEMO_CERTS.map((cert, idx) => {
-                const isSelected = selectedCertIndex === idx;
-                return (
-                  <button
-                    key={cert.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedCertIndex(idx);
-                      setDemoVerifiedText(null);
-                    }}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all duration-300 ${
-                      isSelected
-                        ? "border-govt-navy bg-white shadow-md ring-2 ring-govt-navy/10"
-                        : "border-slate-200/90 bg-slate-50/70 hover:bg-white hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2 mb-1.5 font-mono text-[10px]">
-                      <span className={`font-bold px-2 py-0.5 rounded ${isSelected ? "bg-govt-navy text-white" : "bg-slate-200 text-slate-700"}`}>
-                        {cert.id}
-                      </span>
-                      <span className="text-slate-500 font-semibold">BLOCK #{cert.blockIndex}</span>
-                    </div>
-
-                    <div className="font-display text-sm font-bold text-govt-navy leading-snug">
-                      {cert.type}
-                    </div>
-
-                    <div className="font-mono text-[11px] font-semibold text-govt-blue mt-1">
-                      {cert.primitive}
-                    </div>
-
-                    <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                      <span className="truncate max-w-[180px]">{cert.target}</span>
-                      <span className="text-emerald-700 font-bold">✓ VALIDATED</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Middle Column: Interactive Certificate Visual Mockup (5 cols) */}
-            <div className="lg:col-span-5">
-              {(() => {
-                const curCert = DEMO_CERTS[selectedCertIndex];
-                return (
-                  <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-lg relative overflow-hidden flex flex-col justify-between h-full">
-                    {/* Top Watermark Emblem */}
-                    <div className="absolute top-4 right-4 opacity-10 pointer-events-none">
-                      <svg className="w-24 h-24 text-govt-navy" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                      </svg>
-                    </div>
-
-                    <div>
-                      {/* Certificate Header */}
-                      <div className="border-b border-slate-200 pb-4 mb-4">
-                        <div className="flex items-center justify-between gap-2 mb-1 font-mono text-[10px]">
-                          <span className="font-bold text-govt-navy bg-govt-goldLight px-2.5 py-0.5 rounded border border-govt-gold/40">
-                            GOVT OF INDIA · NTRO DFU
-                          </span>
-                          <span className="text-emerald-700 font-bold">✓ SHA-256 SIGNED</span>
-                        </div>
-                        <h3 className="font-display text-lg font-bold text-govt-navy">
-                          Official Certificate of Operation
-                        </h3>
-                        <div className="font-mono text-xs text-slate-500 font-semibold">
-                          ID: {curCert.id}
-                        </div>
-                      </div>
-
-                      {/* Certificate Fields Grid */}
-                      <div className="space-y-3 text-xs">
-                        <div className="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/70">
-                          <div>
-                            <div className="font-mono text-[9px] text-slate-400 font-bold uppercase">MODULE</div>
-                            <div className="font-semibold text-slate-800">{curCert.module}</div>
-                          </div>
-                          <div>
-                            <div className="font-mono text-[9px] text-slate-400 font-bold uppercase">PRIMITIVE</div>
-                            <div className="font-semibold text-govt-blue">{curCert.primitive}</div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="font-mono text-[9px] text-slate-400 font-bold uppercase">TARGET MEDIA / SCOPE</div>
-                          <div className="font-medium text-slate-800 bg-slate-50 p-2 rounded-lg border border-slate-200/60 mt-0.5 font-mono text-[11px]">
-                            {curCert.target}
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <div className="font-mono text-[9px] text-slate-400 font-bold uppercase">OPERATOR ID</div>
-                            <div className="font-medium text-slate-700 text-[11px] truncate">{curCert.operator}</div>
-                          </div>
-                          <div>
-                            <div className="font-mono text-[9px] text-slate-400 font-bold uppercase">TIMESTAMP</div>
-                            <div className="font-medium text-slate-700 text-[11px] font-mono">{curCert.timestamp}</div>
-                          </div>
-                        </div>
-
-                        {/* Cryptographic Digest Box */}
-                        <div className="bg-slate-900 text-slate-100 p-3 rounded-xl space-y-1 font-mono text-[10px]">
-                          <div className="text-slate-400 flex items-center justify-between">
-                            <span>SHA-256 MERKLE ROOT DIGEST</span>
-                            <span className="text-emerald-400">CHAIN BLOCK #{curCert.blockIndex}</span>
-                          </div>
-                          <div className="text-emerald-300 break-all bg-slate-950 p-1.5 rounded border border-slate-800 text-[9px]">
-                            {curCert.sha256}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Verification Simulation Button */}
-                    <div className="mt-5 pt-4 border-t border-slate-100 space-y-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsVerifyingDemo(true);
-                          setDemoVerifiedText(null);
-                          setTimeout(() => {
-                            setIsVerifyingDemo(false);
-                            setDemoVerifiedText(`100% Cryptographic Match! Hash digest matches chain block #${curCert.blockIndex}. Signature verified against ECDSA P-256 key ${curCert.ecdsaKey}.`);
-                          }, 800);
-                        }}
-                        disabled={isVerifyingDemo}
-                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-govt-navy hover:bg-govt-blueDark text-white font-bold px-4 py-2.5 text-xs transition-all shadow-md disabled:opacity-50"
-                      >
-                        {isVerifyingDemo ? (
-                          <>
-                            <span className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                            <span>Computing SHA-256 Checksum...</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg className="w-4 h-4 text-govt-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                            <span>Test SHA-256 Ledger Verification</span>
-                          </>
-                        )}
-                      </button>
-
-                      {demoVerifiedText && (
-                        <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-2.5 text-xs text-emerald-950 font-medium flex items-start gap-2">
-                          <span className="text-emerald-600 font-bold text-sm">✓</span>
-                          <span>{demoVerifiedText}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-
-            {/* Right Column: Visual Hash-Chain Node Graph (3 cols) */}
-            <div className="lg:col-span-3 flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-slate-50 p-5 shadow-sm space-y-4">
-              <div>
-                <div className="font-mono text-[10px] font-bold text-govt-navy uppercase tracking-widest mb-1">
-                  CHAIN TOPOLOGY NODE GRAPH
-                </div>
-                <h4 className="font-display text-sm font-bold text-slate-800">
-                  Append-Only Hash Nodes
-                </h4>
-                <p className="text-[11px] text-slate-500 mt-1 font-normal">
-                  Each block incorporates the SHA-256 digest of the previous block, preventing retroactive modification.
-                </p>
-
-                {/* Vertical Visual Linked Nodes */}
-                <div className="mt-4 space-y-3 relative">
-                  <div className="absolute top-4 bottom-4 left-4 w-0.5 bg-gradient-to-b from-govt-navy via-govt-blue to-emerald-500 -z-0" />
-
-                  {DEMO_CERTS.map((cert, idx) => {
-                    const isActive = selectedCertIndex === idx;
-                    return (
-                      <div
-                        key={cert.id}
-                        onClick={() => setSelectedCertIndex(idx)}
-                        className={`relative z-10 flex items-center gap-3 p-2.5 rounded-xl cursor-pointer border transition-all ${
-                          isActive
-                            ? "bg-white border-govt-navy shadow-md ring-1 ring-govt-navy/10"
-                            : "bg-white/80 border-slate-200 hover:border-slate-300"
-                        }`}
-                      >
-                        <div className={`h-7 w-7 rounded-lg font-mono text-[10px] font-bold flex items-center justify-center shrink-0 ${
-                          isActive ? "bg-govt-navy text-white" : "bg-slate-200 text-slate-700"
-                        }`}>
-                          #{cert.blockIndex}
-                        </div>
-                        <div className="truncate text-xs">
-                          <div className="font-mono font-bold text-slate-800 text-[11px] truncate">{cert.id}</div>
-                          <div className="text-[10px] text-slate-500 font-mono truncate">{cert.sha256.slice(0, 16)}...</div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Bottom Chain Audit Status */}
-              <div className="pt-3 border-t border-slate-200/80 flex items-center justify-between text-[10px] font-mono">
-                <span className="text-slate-500 font-semibold">CHAIN STATUS:</span>
-                <span className="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">
-                  100% INTACT
-                </span>
-              </div>
             </div>
           </div>
         </div>
