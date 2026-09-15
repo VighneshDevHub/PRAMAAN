@@ -1089,6 +1089,9 @@ All tests use file-based targets only — no real hardware required. Cross-platf
 - [x] PDF certificate generation with embedded QR code
 - [x] Public certificate verification (no login)
 - [x] Full RBAC (4 roles)
+- [x] Hindi (hi-IN) language support
+- [x] Offline Support
+
 - [x] WebSocket real-time job progress
 - [x] Case management with evidence catalogue and timeline
 - [x] Device inventory with health tracking
@@ -1108,7 +1111,6 @@ All tests use file-based targets only — no real hardware required. Cross-platf
 - [ ] NTFS MFT parsing for higher-accuracy recovery
 - [ ] AI image content classification (ResNet)
 - [ ] E01/EWF forensic image format support
-- [ ] Hindi (hi-IN) language support
 - [ ] Alembic-based schema migrations
 - [ ] Nginx reverse proxy + TLS termination
 - [ ] GitHub Actions CI/CD pipeline
