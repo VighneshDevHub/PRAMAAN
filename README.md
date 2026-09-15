@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo2.png" alt="NTRO PRAMAAN Logo" width="280" />
+<img src="logo2.png" alt="NTRO PRAMAAN Logo" width="100%" />
 
 # प्रमाण — PRAMAAN
 
