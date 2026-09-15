@@ -35,19 +35,34 @@ class RecoverySummary:
     recovered_files: list[RecoveredFileResult]
 
 
-def run_recovery(image_path: str, output_dir: str) -> RecoverySummary:
+def run_recovery(image_path: str, output_dir: str, progress_callback=None) -> RecoverySummary:
     os.makedirs(output_dir, exist_ok=True)
+
+    if progress_callback:
+        progress_callback(10, "SCANNING", "Hashing evidence image and reading block stream")
 
     reader = ImageReader(image_path)
     hash_before = reader.sha256()  # evidence integrity checkpoint
+
+    if progress_callback:
+        progress_callback(25, "CARVING", "Carving candidate file headers from evidence stream")
 
     buffer = reader.read_all_bytes()
     carved_candidates = carve(buffer)
 
     recovered: list[RecoveredFileResult] = []
     classification_counts: dict[str, int] = {}
+    total_candidates = max(1, len(carved_candidates))
 
     for i, candidate in enumerate(carved_candidates):
+        if progress_callback:
+            pct = 25 + int(((i + 1) / total_candidates) * 55)
+            progress_callback(
+                pct,
+                "CLASSIFYING",
+                f"Classifying candidate {i + 1}/{total_candidates} ({candidate.signature_name})",
+            )
+
         classified = classify(candidate)
         confidence = score(classified)
 
@@ -69,7 +84,13 @@ def run_recovery(image_path: str, output_dir: str) -> RecoverySummary:
             classification_counts.get(classified.signature_name, 0) + 1
         )
 
+    if progress_callback:
+        progress_callback(85, "VERIFYING", "Computing post-extraction evidence hash check")
+
     hash_after = reader.sha256()  # must be identical to hash_before
+
+    if progress_callback:
+        progress_callback(95, "VERIFYING", "Building forensic recovery report and sealing evidence")
 
     avg_confidence = (
         round(sum(r.confidence for r in recovered) / len(recovered), 2)

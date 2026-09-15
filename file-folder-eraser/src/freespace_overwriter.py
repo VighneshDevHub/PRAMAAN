@@ -27,7 +27,11 @@ class FreeSpaceOverwriteResult:
     capped: bool
 
 
-def overwrite_free_space(directory: str, max_bytes: int | None = None) -> FreeSpaceOverwriteResult:
+def overwrite_free_space(
+    directory: str,
+    max_bytes: int | None = None,
+    progress_callback=None,
+) -> FreeSpaceOverwriteResult:
     """Write random data to a temp file in `directory` until free space
     on that volume is exhausted or `max_bytes` is reached, then delete
     the temp file. Returns how much was actually written.
@@ -60,6 +64,14 @@ def overwrite_free_space(directory: str, max_bytes: int | None = None) -> FreeSp
 
                 f.write(os.urandom(chunk_size))
                 bytes_written += chunk_size
+
+                if progress_callback:
+                    pct = 50 + int((bytes_written / max_bytes) * 40) if max_bytes else 70
+                    progress_callback(
+                        min(90, pct),
+                        "SCRUBBING",
+                        f"Overwriting free space: {bytes_written // (1024 * 1024)} MB written",
+                    )
             f.flush()
             os.fsync(f.fileno())
     finally:

@@ -8,11 +8,6 @@ pydantic[email]>=2.9
 pydantic-settings>=2.6
 cryptography>=43.0
 python-jose[cryptography]>=3.3
-passlib[bcrypt]>=1.7
-# NOTE: passlib's bcrypt backend has a known incompatibility with
-# bcrypt>=4.1 (a self-test inside passlib itself raises ValueError on
-# newer bcrypt's stricter 72-byte password handling). Pin bcrypt below
-# that until passlib ships a fix.
 bcrypt==4.0.1
 pytest>=8.3
 pytest-asyncio>=0.24

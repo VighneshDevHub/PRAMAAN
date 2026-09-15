@@ -47,16 +47,37 @@ def _isolated_agent_imports(root: Path):
         sys.modules.update(previous)
 
 
+def make_progress_callback(loop: asyncio.AbstractEventLoop, job_id: str):
+    """Return a thread-safe callback that schedules job progress DB updates
+    and WebSocket event broadcasts onto the main asyncio loop."""
+    def callback(percent: int, stage: str = "", message: str = ""):
+        async def _update():
+            kwargs: dict[str, object] = {"progress_percent": max(0, min(100, percent))}
+            if stage:
+                kwargs["stage"] = stage
+            if message:
+                kwargs["message"] = message
+            job = await _update_job(job_id, **kwargs)
+            if job is not None:
+                await _broadcast(job, "PROGRESS")
+        asyncio.run_coroutine_threadsafe(_update(), loop)
+    return callback
+
+
 def _load_batch_runner():
     with _AGENT_IMPORT_LOCK, _isolated_agent_imports(_FILE_ERASER_ROOT):
         return importlib.import_module("src.batch_runner").run_batch
 
 
-def _run_recovery(payload: dict) -> dict:
+def _run_recovery(payload: dict, progress_callback=None) -> dict:
     with _AGENT_IMPORT_LOCK, _isolated_agent_imports(_RECOVERY_ROOT):
         run_recovery = importlib.import_module("src.recovery_engine").run_recovery
         started_at = datetime.now(timezone.utc)
-        summary = run_recovery(str(payload["image_path"]), str(payload["output_dir"]))
+        summary = run_recovery(
+            str(payload["image_path"]),
+            str(payload["output_dir"]),
+            progress_callback=progress_callback,
+        )
         completed_at = datetime.now(timezone.utc)
         report = importlib.import_module("src.report_builder").build_report(
             summary, started_at, completed_at, "dashboard-worker"
@@ -64,7 +85,7 @@ def _run_recovery(payload: dict) -> dict:
         return report
 
 
-def _run_drive_erase(payload: dict) -> dict:
+def _run_drive_erase(payload: dict, progress_callback=None) -> dict:
     with _AGENT_IMPORT_LOCK, _isolated_agent_imports(_DRIVE_ERASER_ROOT):
         main = importlib.import_module("src.main")
         method_selector = importlib.import_module("src.method_selector")
@@ -90,12 +111,16 @@ def _run_drive_erase(payload: dict) -> dict:
         else:
             detector = importlib.import_module("src.detectors.file_target").FileTargetDetector()
             wipe_target = target
+        if progress_callback:
+            progress_callback(10, "DETECTING", "Detecting target device architecture and capabilities")
         device = detector.detect(target)
         wiper = method_selector.select_wiper(device.device_type, device.supports_encryption)
         samples = verifier.capture_pre_wipe_samples(wipe_target, device.size_bytes)
         started_at = datetime.now(timezone.utc)
-        wipe_result = wiper.wipe(wipe_target, device.size_bytes)
+        wipe_result = wiper.wipe(wipe_target, device.size_bytes, progress_callback=progress_callback)
         completed_at = datetime.now(timezone.utc)
+        if progress_callback:
+            progress_callback(90, "VERIFYING", "Sampling wiped sectors for read-back pattern verification")
         verification = verifier.verify_wipe(wipe_target, samples)
         return report_builder.build_report(
             device, wipe_result, started_at, completed_at, verification.passed, "dashboard-worker"
@@ -200,12 +225,16 @@ async def execute_file_erase_job(job_id: str, operator_email: str) -> None:
         if not targets:
             raise ValueError("FILE_ERASE job requires at least one target")
 
+        loop = asyncio.get_running_loop()
+        progress_cb = make_progress_callback(loop, job_id)
+
         run_batch = _load_batch_runner()
         result = await asyncio.to_thread(
             run_batch,
             [str(target) for target in targets],
             bool(payload.get("free_space_overwrite", False)),
             payload.get("freespace_max_bytes"),
+            progress_cb,
         )
         report = {
             "operation_type": "FILE_ERASE",
@@ -283,7 +312,11 @@ async def _execute_report_job(
         if job is None:
             return
         await _broadcast(job, "PROGRESS")
-        report = await asyncio.to_thread(runner, job.payload or {})
+
+        loop = asyncio.get_running_loop()
+        progress_cb = make_progress_callback(loop, job_id)
+
+        report = await asyncio.to_thread(runner, job.payload or {}, progress_cb)
         certificate_id = await _record_operation(job, report, operator_email)
         final = await _update_job(
             job_id,
@@ -316,3 +349,4 @@ async def execute_recovery_job(job_id: str, operator_email: str) -> None:
 
 async def execute_drive_erase_job(job_id: str, operator_email: str) -> None:
     await _execute_report_job(job_id, operator_email, "drive-eraser-agent", _run_drive_erase, "WIPING")
+

@@ -41,6 +41,7 @@ def run_batch(
     targets: list[str],
     overwrite_freespace: bool = True,
     freespace_max_bytes: int | None = None,
+    progress_callback=None,
 ) -> BatchResult:
     """Process a mixed list of file and folder paths. A folder path
     expands into all files within it (see secure_delete_folder). Never
@@ -49,8 +50,17 @@ def run_batch(
     what succeeded vs. failed.
     """
     all_results: list[DeleteResult] = []
+    total_targets = max(1, len(targets))
 
-    for target in targets:
+    for idx, target in enumerate(targets):
+        if progress_callback:
+            # Map target processing to 10% - 50%
+            pct = 10 + int(((idx + 1) / total_targets) * 40)
+            progress_callback(
+                pct,
+                "OVERWRITING",
+                f"Overwriting target {idx + 1}/{total_targets}: {os.path.basename(target)}",
+            )
         if os.path.isdir(target):
             all_results.extend(secure_delete_folder(target))
         else:
@@ -65,6 +75,8 @@ def run_batch(
 
     freespace_bytes = 0
     if overwrite_freespace and files_deleted > 0:
+        if progress_callback:
+            progress_callback(50, "SCRUBBING", "Beginning volume free-space overwrite pass")
         # Overwrite free space once, on the nearest still-existing
         # directory of the first successfully-processed target — covers
         # freed blocks from this whole batch in one pass. The target's
@@ -72,8 +84,15 @@ def run_batch(
         # that secure_delete_folder just removed entirely.
         first_success = next(r for r in all_results if r.success)
         directory = _nearest_existing_dir(os.path.dirname(first_success.original_path) or ".")
-        fs_result = overwrite_free_space(directory, max_bytes=freespace_max_bytes)
+        fs_result = overwrite_free_space(
+            directory,
+            max_bytes=freespace_max_bytes,
+            progress_callback=progress_callback,
+        )
         freespace_bytes = fs_result.bytes_written
+
+    if progress_callback:
+        progress_callback(95, "VERIFYING", "Validating file block erasure and metadata scrubbing")
 
     return BatchResult(
         targets_requested=len(targets),

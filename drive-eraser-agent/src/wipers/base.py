@@ -13,5 +13,5 @@ class Wiper(ABC):
     method_name: str
 
     @abstractmethod
-    def wipe(self, target: str, size_bytes: int) -> WipeResult:
+    def wipe(self, target: str, size_bytes: int, progress_callback=None) -> WipeResult:
         raise NotImplementedError
