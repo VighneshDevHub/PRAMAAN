@@ -62,3 +62,4 @@ temp/
 
 recovery-engine/recovery-output/
 frontend/tsconfig.tsbuildinfo
+build/

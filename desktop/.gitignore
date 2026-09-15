@@ -1,0 +1,12 @@
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Rust / Cargo
+src-tauri/target/
+src-tauri/gen/
+src-tauri/binaries/*.exe
+
+# PyInstaller / Python
+__pycache__/
+*.pyc
