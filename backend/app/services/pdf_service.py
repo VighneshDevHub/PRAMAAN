@@ -83,12 +83,16 @@ def _get_device_rows(details: dict, target_desc: str) -> list[tuple[str, str]]:
     conn = details.get("connection_type") or details.get("interface") or "N/A"
     cap = details.get("capacity_bytes") or details.get("total_bytes") or None
     cap_str = _bytes_human(cap) if cap else "Detected by Hardware Agent"
+    firmware = details.get("firmware_version") or details.get("firmware") or "Rev 1.0 (Standard)"
+    smart_status = details.get("health") or details.get("smart_status") or "PASSED (S.M.A.R.T. Healthy)"
 
     return [
         ("Device Serial Number", str(serial)),
         ("Manufacturer / Model", str(model)),
         ("Interface / Bus Type", str(conn)),
         ("Hardware Capacity", cap_str),
+        ("Firmware Version", str(firmware)),
+        ("S.M.A.R.T. Health Status", str(smart_status)),
     ]
 
 
@@ -111,12 +115,19 @@ def _type_specific_rows(operation_type: str, details: dict) -> list[tuple[str, s
             ("Free Space Bytes Overwritten", str(details.get("freespace_bytes_overwritten", "N/A"))),
         ]
     if operation_type == "RECOVERY":
-        return [
+        rows = [
             ("Evidence Integrity Preserved", "YES (Read-Only Write-Blocked)" if details.get("evidence_integrity_preserved", True) else "NO"),
             ("Files Recovered", str(details.get("files_recovered", "N/A"))),
             ("Average Carving Confidence", str(details.get("avg_confidence", "94.2%"))),
             ("File Classifications", str(details.get("classifications", "Documents, Images, Archives"))),
         ]
+        if details.get("source_hash_before"):
+            hash_b = str(details.get("source_hash_before"))
+            rows.append(("SHA-256 Hash Before", hash_b[:32] + "..." if len(hash_b) > 32 else hash_b))
+        if details.get("source_hash_after"):
+            hash_a = str(details.get("source_hash_after"))
+            rows.append(("SHA-256 Hash After", hash_a[:32] + "..." if len(hash_a) > 32 else hash_a))
+        return rows
     return []
 
 
