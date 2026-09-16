@@ -276,17 +276,34 @@ export default function JobDetailClient() {
                     </Link>
                   )}
                 </div>
-                <JobProgressBar value={job.progress_percent} label={job.stage || "Queued"} />
+                <JobProgressBar
+                  value={job.status === "COMPLETED" ? 100 : job.progress_percent}
+                  label={job.status === "COMPLETED" ? "COMPLETED" : (job.stage || "Queued")}
+                />
                 <ExecutionRail job={job} />
                 <div className="grid gap-3 sm:grid-cols-3">
-                  <TelemetryTile label="Progress" value={`${job.progress_percent}%`} hint={job.status} />
-                  <TelemetryTile label="Agent" value={job.assigned_agent_id || "Awaiting claim"} hint={readyState === "open" ? "WebSocket live" : "Polling fallback"} />
-                  <TelemetryTile label="Elapsed" value={job.started_at ? formatDateTime(job.started_at) : "Not started"} hint={job.completed_at ? "Completed" : "Active lifecycle"} />
+                  <TelemetryTile
+                    label="Progress"
+                    value={`${job.status === "COMPLETED" ? 100 : job.progress_percent}%`}
+                    hint={job.status}
+                  />
+                  <TelemetryTile
+                    label="Agent"
+                    value={job.assigned_agent_id || "Awaiting claim"}
+                    hint={readyState === "open" ? "WebSocket live" : "Polling fallback"}
+                  />
+                  <TelemetryTile
+                    label="Elapsed"
+                    value={job.started_at ? formatDateTime(job.started_at) : "Not started"}
+                    hint={job.completed_at ? "Completed" : "Active lifecycle"}
+                  />
                 </div>
                 <div className="rounded-md border border-line bg-field p-4">
                   <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Current message</div>
                   <p className="mt-2 text-sm text-main">
-                    {job.message || job.error_message || "No execution message has been recorded yet."}
+                    {job.status === "COMPLETED" && (!job.message || job.message.toLowerCase().includes("classifying") || job.message.toLowerCase().includes("candidate"))
+                      ? "Forensic recovery pipeline completed and certificate sealed."
+                      : (job.message || job.error_message || "No execution message has been recorded yet.")}
                   </p>
                 </div>
                 {lastEvent && (

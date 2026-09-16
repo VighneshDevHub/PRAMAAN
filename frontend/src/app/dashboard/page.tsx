@@ -217,12 +217,12 @@ function RecentJobsList({ jobs: initialJobs }: { jobs: JobOut[] }) {
                   </div>
                   <div className="w-36 shrink-0 text-right">
                     <div className="font-mono text-xs font-bold text-govt-navy">
-                      {j.progress_percent}%
+                      {j.status === "COMPLETED" ? 100 : j.progress_percent}%
                     </div>
                     <div className="mt-1.5 fg-progress-track h-2 rounded-xs overflow-hidden">
                       <div
                         className="fg-progress-fill bg-govt-navy transition-all duration-300"
-                        style={{ width: `${j.progress_percent}%` }}
+                        style={{ width: `${j.status === "COMPLETED" ? 100 : j.progress_percent}%` }}
                       />
                     </div>
                   </div>

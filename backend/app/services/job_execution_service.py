@@ -147,6 +147,11 @@ async def _update_job(job_id: str, **values: object) -> Job | None:
         job = result.scalar_one_or_none()
         if job is None:
             return None
+        # Prevent late progress callback events from overwriting completed/failed job state
+        if job.status in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
+            new_status = values.get("status")
+            if new_status is None or new_status not in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
+                return job
         for key, value in values.items():
             setattr(job, key, value)
         await db.commit()

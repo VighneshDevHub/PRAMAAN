@@ -36,16 +36,19 @@ class RecoverySummary:
 
 
 def run_recovery(image_path: str, output_dir: str, progress_callback=None) -> RecoverySummary:
+    import time
     os.makedirs(output_dir, exist_ok=True)
 
     if progress_callback:
         progress_callback(10, "SCANNING", "Hashing evidence image and reading block stream")
+        time.sleep(0.2)
 
     reader = ImageReader(image_path)
     hash_before = reader.sha256()  # evidence integrity checkpoint
 
     if progress_callback:
         progress_callback(25, "CARVING", "Carving candidate file headers from evidence stream")
+        time.sleep(0.3)
 
     buffer = reader.read_all_bytes()
     carved_candidates = carve(buffer)
@@ -54,14 +57,17 @@ def run_recovery(image_path: str, output_dir: str, progress_callback=None) -> Re
     classification_counts: dict[str, int] = {}
     total_candidates = max(1, len(carved_candidates))
 
+    last_pct = -1
     for i, candidate in enumerate(carved_candidates):
-        if progress_callback:
-            pct = 25 + int(((i + 1) / total_candidates) * 55)
+        pct = 25 + int(((i + 1) / total_candidates) * 55)
+        if progress_callback and (pct != last_pct or i == total_candidates - 1):
+            last_pct = pct
             progress_callback(
                 pct,
                 "CLASSIFYING",
                 f"Classifying candidate {i + 1}/{total_candidates} ({candidate.signature_name})",
             )
+            time.sleep(0.05)
 
         classified = classify(candidate)
         confidence = score(classified)
@@ -86,11 +92,13 @@ def run_recovery(image_path: str, output_dir: str, progress_callback=None) -> Re
 
     if progress_callback:
         progress_callback(85, "VERIFYING", "Computing post-extraction evidence hash check")
+        time.sleep(0.25)
 
     hash_after = reader.sha256()  # must be identical to hash_before
 
     if progress_callback:
         progress_callback(95, "VERIFYING", "Building forensic recovery report and sealing evidence")
+        time.sleep(0.2)
 
     avg_confidence = (
         round(sum(r.confidence for r in recovered) / len(recovered), 2)

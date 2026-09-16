@@ -121,12 +121,19 @@ export function JobRow({
         <JobStatusBadge status={job.status} />
       </td>
       <td className="min-w-[180px]">
-        <JobProgressBar value={job.progress_percent} label={job.stage || "Queued"} />
+        <JobProgressBar
+          value={job.status === "COMPLETED" ? 100 : job.progress_percent}
+          label={job.status === "COMPLETED" ? "COMPLETED" : (job.stage || "Queued")}
+        />
       </td>
       <td>
-        <div className="max-w-[260px] truncate text-sm text-main">{job.stage || "-"}</div>
+        <div className="max-w-[260px] truncate text-sm text-main">
+          {job.status === "COMPLETED" ? "COMPLETED" : (job.stage || "-")}
+        </div>
         <div className="mt-1 max-w-[260px] truncate text-xs text-muted">
-          {job.message || job.error_message || "-"}
+          {job.status === "COMPLETED" && (!job.message || job.message.toLowerCase().includes("classifying") || job.message.toLowerCase().includes("candidate"))
+            ? "Completed & sealed"
+            : (job.message || job.error_message || "-")}
         </div>
       </td>
       <td>
