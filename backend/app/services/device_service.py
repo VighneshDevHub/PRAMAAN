@@ -99,8 +99,8 @@ def _read_windows_portable_devices() -> list[dict[str, object]]:
     the user-facing device record.
     """
     command = (
-        "Get-PnpDevice -PresentOnly | Where-Object { $_.Class -eq 'WPD' } | "
-        "Select FriendlyName,InstanceId,Class | ConvertTo-Json -Compress"
+        "Get-PnpDevice -PresentOnly | Where-Object { $_.Class -eq 'WPD' -and $_.InstanceId -notlike '*USBSTOR*' } | "
+        "Select-Object FriendlyName,InstanceId,Class | ConvertTo-Json -Compress"
     )
     try:
         result = subprocess.run(
