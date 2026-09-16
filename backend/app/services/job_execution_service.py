@@ -50,7 +50,22 @@ def _isolated_agent_imports(root: Path):
 def make_progress_callback(loop: asyncio.AbstractEventLoop, job_id: str):
     """Return a thread-safe callback that schedules job progress DB updates
     and WebSocket event broadcasts onto the main asyncio loop."""
+    import time
+    last_sent_pct = [0]
+    last_sent_time = [0.0]
+
     def callback(percent: int, stage: str = "", message: str = ""):
+        now = time.time()
+        # Enforce strict monotonicity: progress percent can NEVER regress to a lower number
+        if percent < last_sent_pct[0] and percent < 100:
+            return
+        # Throttle updates: skip if percent hasn't changed and less than 120ms passed
+        if percent == last_sent_pct[0] and (now - last_sent_time[0]) < 0.12:
+            return
+
+        last_sent_pct[0] = max(last_sent_pct[0], percent)
+        last_sent_time[0] = now
+
         async def _update():
             kwargs: dict[str, object] = {"progress_percent": max(0, min(100, percent))}
             if stage:
@@ -152,6 +167,11 @@ async def _update_job(job_id: str, **values: object) -> Job | None:
             new_status = values.get("status")
             if new_status is None or new_status not in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
                 return job
+        # Monotonicity check: progress percent can NEVER regress on an active job
+        new_progress = values.get("progress_percent")
+        if isinstance(new_progress, int) and job.status not in (TaskStatus.PENDING, TaskStatus.CLAIMED):
+            values["progress_percent"] = max(job.progress_percent, new_progress)
+
         for key, value in values.items():
             setattr(job, key, value)
         await db.commit()

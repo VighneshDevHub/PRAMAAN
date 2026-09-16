@@ -62,13 +62,24 @@ async def get_summary(db: AsyncSession) -> dict:
         erase_records = (
             await db.execute(
                 select(OperationRecord.details).where(
-                    OperationRecord.operation_type == OperationType.DRIVE_ERASE
+                    or_(
+                        OperationRecord.operation_type == OperationType.DRIVE_ERASE,
+                        OperationRecord.operation_type == OperationType.FILE_ERASE,
+                    )
                 )
             )
         ).scalars().all()
-        storage_sanitized_bytes = sum(
-            int(d.get("bytes_processed", 0)) for d in erase_records if isinstance(d, dict)
-        )
+        storage_sanitized_bytes = 0
+        for d in erase_records:
+            if isinstance(d, dict):
+                val = (
+                    d.get("bytes_processed")
+                    or d.get("total_bytes_overwritten")
+                    or d.get("data_size")
+                    or d.get("bytes_erased")
+                    or 0
+                )
+                storage_sanitized_bytes += int(val)
 
         top_inv_stmt = (
             select(OperationRecord.operator.label("email"), func.count().label("cnt"))

@@ -125,10 +125,13 @@ export default function JobDetailClient() {
     if (!lastEvent) return;
     setJob((current) => {
       if (!current) return current;
+      const newStatus = lastEvent.status ?? current.status;
+      const rawPct = lastEvent.progress_percent ?? current.progress_percent;
+      const monotonicPct = newStatus === "COMPLETED" ? 100 : Math.max(current.progress_percent, rawPct);
       return {
         ...current,
-        status: lastEvent.status ?? current.status,
-        progress_percent: lastEvent.progress_percent ?? current.progress_percent,
+        status: newStatus,
+        progress_percent: monotonicPct,
         stage: lastEvent.stage ?? current.stage,
         message: lastEvent.message ?? current.message,
         error_message: lastEvent.error_message ?? current.error_message,
