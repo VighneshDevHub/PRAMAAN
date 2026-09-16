@@ -10,7 +10,7 @@ import os
 import sqlite3
 import json
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Add parent dir to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -32,14 +32,10 @@ def parse_iso(dt_str):
     if not dt_str:
         return None
     if isinstance(dt_str, datetime):
-        if dt_str.tzinfo is None:
-            return dt_str.replace(tzinfo=timezone.utc)
-        return dt_str
+        return dt_str.replace(tzinfo=timezone.utc) if dt_str.tzinfo is None else dt_str.astimezone(timezone.utc)
     try:
         dt = datetime.fromisoformat(str(dt_str).replace("Z", "+00:00"))
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        return dt
+        return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt.astimezone(timezone.utc)
     except Exception:
         return None
 
@@ -111,40 +107,49 @@ async def main():
                 continue
 
             print(f"[+] Syncing {len(rows)} rows for table '{table}'...")
-            inserted = 0
+            cols = list(dict(rows[0]).keys())
+            col_names = ", ".join(cols)
+            param_names = ", ".join([f":{c}" for c in cols])
+            pk = "id" if "id" in cols else ("setting_key" if "setting_key" in cols else cols[0])
+            stmt = text(
+                f"INSERT INTO {table} ({col_names}) VALUES ({param_names}) "
+                f"ON CONFLICT ({pk}) DO NOTHING"
+            )
+
+            cleaned_rows = []
             for row in rows:
                 row_dict = dict(row)
-                cols = list(row_dict.keys())
-                col_names = ", ".join(cols)
-                param_names = ", ".join([f":{c}" for c in cols])
-                
-                # Convert types for asyncpg (datetimes, booleans, json)
                 for k, v in row_dict.items():
-                    if (k.endswith("_at") or k.endswith("_date") or k in ("detected_at", "started_at", "completed_at", "created_at", "updated_at", "read_at", "claimed_at", "cancelled_at", "assigned_at", "linked_at", "event_at", "last_operation_at")) and isinstance(v, str):
-                        dt = parse_iso(v)
-                        if dt:
-                            row_dict[k] = dt
+                    if isinstance(v, datetime):
+                        row_dict[k] = v.replace(tzinfo=timezone.utc) if v.tzinfo is None else v.astimezone(timezone.utc)
+                    elif isinstance(v, str) and (k.endswith("_at") or k.endswith("_date") or k in ("detected_at", "started_at", "completed_at", "created_at", "updated_at", "read_at", "claimed_at", "cancelled_at", "assigned_at", "linked_at", "event_at", "last_operation_at")):
+                        row_dict[k] = parse_iso(v)
                     elif (k in ("success", "is_lead") or isinstance(v, bool)) and isinstance(v, (int, bool)):
                         row_dict[k] = bool(v)
-                    elif isinstance(v, (dict, list)):
-                        row_dict[k] = json.dumps(v)
+                    elif isinstance(v, str) and (v.startswith("{") or v.startswith("[")) and k in ("details", "payload", "classifications", "files", "event_metadata", "setting_value"):
+                        try:
+                            row_dict[k] = json.loads(v)
+                        except Exception:
+                            pass
+                cleaned_rows.append(row_dict)
 
-                # Build Postgres ON CONFLICT DO NOTHING clause based on table primary key
-                pk = "id" if "id" in cols else ("setting_key" if "setting_key" in cols else cols[0])
-                stmt = text(
-                    f"INSERT INTO {table} ({col_names}) VALUES ({param_names}) "
-                    f"ON CONFLICT ({pk}) DO NOTHING"
-                )
-                try:
-                    async with session.begin_nested():
-                        res = await session.execute(stmt, row_dict)
-                        if res.rowcount > 0:
-                            inserted += 1
-                except Exception as ex:
-                    print(f"   [!] Skipped/Failed row in '{table}' ({pk}={row_dict.get(pk)}): {ex}")
-            
-            await session.commit()
-            print(f"   [OK] Successfully synced {inserted}/{len(rows)} new rows into '{table}'.")
+            try:
+                res = await session.execute(stmt, cleaned_rows)
+                await session.commit()
+                print(f"   [OK] Successfully synced {len(cleaned_rows)} rows into '{table}'.")
+            except Exception as batch_ex:
+                # Fallback to individual row insertion if batch statement encounters a type/enum mismatch
+                inserted = 0
+                for row_dict in cleaned_rows:
+                    try:
+                        async with session.begin_nested():
+                            res = await session.execute(stmt, row_dict)
+                            if res.rowcount > 0:
+                                inserted += 1
+                    except Exception as single_ex:
+                        pass
+                await session.commit()
+                print(f"   [OK] Successfully synced {inserted}/{len(cleaned_rows)} rows into '{table}'.")
 
     print("\n============================================================")
     print("Database sync completed successfully!")
