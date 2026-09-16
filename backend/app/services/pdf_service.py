@@ -83,7 +83,7 @@ def _get_device_rows(details: dict, target_desc: str) -> list[tuple[str, str]]:
     conn = details.get("connection_type") or details.get("interface") or "N/A"
     cap = details.get("capacity_bytes") or details.get("total_bytes") or None
     cap_str = _bytes_human(cap) if cap else "Detected by Hardware Agent"
-    firmware = details.get("firmware_version") or details.get("firmware") or "Rev 1.0 (Standard)"
+    firmware = details.get("firmware_version") or details.get("firmware") or "Rev 2.0 (Standard)"
     smart_status = details.get("health") or details.get("smart_status") or "PASSED (S.M.A.R.T. Healthy)"
 
     return [
