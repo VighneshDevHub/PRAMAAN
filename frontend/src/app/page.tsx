@@ -55,8 +55,8 @@ const FEATURES: FeatureItem[] = [
     num: "01",
     title: "Secure Drive Eraser",
     subtitle: "Hardware-Level Storage Sanitisation",
-    body: "Supports Clear, Purge, and Crypto-Erase primitives for HDD, SSD, NVMe, USB, and SD media with NIST SP 800-88 Rev. 1 compliance and independent 100% block read-back verification.",
-    tags: ["NIST SP 800-88 Rev. 1", "HDD · SSD · NVMe · USB", "Read-Back Verification"],
+    body: "Supports Clear, Purge, and Crypto-Erase primitives for HDD, SSD, NVMe, USB, and SD media with NIST SP 800-88 Rev. 2 compliance and independent 100% block read-back verification.",
+    tags: ["NIST SP 800-88 Rev. 2", "HDD · SSD · NVMe · USB", "Read-Back Verification"],
     href: "/dashboard/drive-eraser",
     badgeBg: "bg-blue-50 text-blue-700 border-blue-200",
     gradient: "from-[#051329] via-[#0B2D4D] to-[#005BAC]",
@@ -149,7 +149,7 @@ const FEATURES: FeatureItem[] = [
 ];
 
 const STANDARDS: string[] = [
-  "NIST SP 800-88 Rev. 1",
+  "NIST SP 800-88 Rev. 2",
   "DoD 5220.22-M",
   "ISO/IEC 27001",
   "MeitY GSR 2025",
@@ -179,7 +179,7 @@ const STANDARD_PILLARS: StandardPillar[] = [
     gradient: "from-[#051329] via-[#0B2D4D] to-[#B8860B]",
     description: "Hardware & logical media sanitisation protocols with mandatory 100% block read-back verification.",
     standards: [
-      { name: "NIST SP 800-88 Rev. 1", desc: "Clear, Purge & Crypto-Erase Guidelines" },
+      { name: "NIST SP 800-88 Rev. 2", desc: "Clear, Purge & Crypto-Erase Guidelines" },
       { name: "DoD 5220.22-M", desc: "US DoD 3-Pass / 7-Pass Sanitisation" },
       { name: "ENISA Guidelines", desc: "EU Cyber Agency Media Destruction" },
     ],
@@ -541,12 +541,12 @@ export default function LandingPage() {
 
             {/* Core Value Statement */}
             <p className="mt-5 max-w-xl text-sm md:text-base leading-relaxed text-muted font-medium">
-              Engineered for defense, intelligence, and law enforcement agencies to execute NIST SP 800-88 Rev. 1 compliant drive erasures, selective file destruction, and forensic file carving — sealed with an immutable SHA-256 hash-chain and ECDSA signatures.
+              Engineered for defense, intelligence, and law enforcement agencies to execute <span className="text-govt-navy/90 font-semibold">NIST SP 800-88 Rev. 2</span> compliant drive erasures, selective file destruction, and forensic file carving — sealed with an immutable <span className="text-govt-navy/90 font-semibold">SHA-256 hash-chain and ECDSA signatures </span>.
             </p>
 
             {/* Platform Badges */}
             <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-mono">
-              <span className="bg-govt-blueLight text-govt-navy px-2.5 py-1 rounded border border-govt-blueRing font-semibold">NIST SP 800-88 REV. 1</span>
+              <span className="bg-govt-blueLight text-govt-navy px-2.5 py-1 rounded border border-govt-blueRing font-semibold">NIST SP 800-88 REV. 2</span>
               <span className="bg-white/90 text-main px-2.5 py-1 rounded border border-line font-medium shadow-2xs">ISO 27037 FORENSIC SEAL</span>
               <span className="bg-white/90 text-main px-2.5 py-1 rounded border border-line font-medium shadow-2xs">DoD 5220.22-M</span>
               <span className="bg-govt-goldLight text-govt-navy px-2.5 py-1 rounded border border-govt-gold/40 font-bold">ECDSA P-256 ANCHORED</span>
@@ -691,7 +691,7 @@ export default function LandingPage() {
                 MODULES: 06/06
               </div>
               <div className="text-xs text-slate-600 font-semibold pr-2">
-                NIST SP 800-88 REV. 1 COMPLIANT
+                NIST SP 800-88 REV. 2 COMPLIANT
               </div>
             </div>
           </div>
@@ -1710,7 +1710,7 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-wrap items-center gap-3 text-slate-700 font-semibold text-[11px]">
               <span className="flex items-center gap-1">
-                <span className="text-emerald-600 font-bold">✓</span> NIST SP 800-88 REV. 1 COMPLIANT
+                <span className="text-emerald-600 font-bold">✓</span> NIST SP 800-88 REV. 2 COMPLIANT
               </span>
               <span className="text-slate-300">|</span>
               <span className="flex items-center gap-1">
@@ -1761,7 +1761,7 @@ export default function LandingPage() {
           <FooterCol
             heading="Security Assurances"
             links={[
-              { href: "#standards", label: "NIST SP 800-88 Rev. 1" },
+              { href: "#standards", label: "NIST SP 800-88 Rev. 2" },
               { href: "#standards", label: "ECDSA P-256 · SHA-256" },
               { href: "#standards", label: "ISO 27037 Evidence" },
               { href: "#hero", label: "Chain Verification" },

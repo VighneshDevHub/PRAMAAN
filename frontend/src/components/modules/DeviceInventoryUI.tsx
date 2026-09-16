@@ -70,14 +70,92 @@ export function DeviceCard({ device }: { device: DeviceOut }) {
         ? `/dashboard/file-eraser?device=${encodeURIComponent(device.id)}`
         : `/dashboard/drive-eraser?device=${encodeURIComponent(device.id)}`;
 
+  const isHostDrive =
+    device.connection_type === "NVMe" ||
+    device.connection_type === "SATA" ||
+    device.connection_type === "PCIe" ||
+    device.media_type === "NVME_SSD" ||
+    device.media_type === "SSD" ||
+    (device.model && (
+      device.model.toLowerCase().includes("samsung") ||
+      device.model.toLowerCase().includes("nvme") ||
+      device.model.toLowerCase().includes("system")
+    )) ||
+    (device.notes && (
+      device.notes.toLowerCase().includes("host") ||
+      device.notes.toLowerCase().includes("system")
+    ));
+
   return (
-    <article className="fg-panel overflow-hidden transition-all hover:border-govt-blue/40">
+    <article
+      className={`fg-panel overflow-hidden transition-all rounded-xl border ${
+        isHostDrive
+          ? "border-amber-400/80 bg-gradient-to-b from-amber-50/40 via-panel to-panel shadow-sm hover:border-amber-500"
+          : "border-govt-blue/30 bg-panel hover:border-govt-blue/60 shadow-xs"
+      }`}
+    >
+      {/* Category Ribbon Header */}
+      <div
+        className={`px-4 py-2 text-xs font-mono font-bold flex items-center justify-between border-b ${
+          isHostDrive
+            ? "bg-slate-900 text-amber-300 border-slate-800"
+            : "bg-govt-blueLight text-govt-navy border-govt-blue/20"
+        }`}
+      >
+        <div className="flex items-center gap-2">
+          {isHostDrive ? (
+            <>
+              <svg
+                className="w-4 h-4 text-amber-400 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
+              <span>HOST MACHINE SYSTEM DRIVE (PRIMARY OS)</span>
+            </>
+          ) : (
+            <>
+              <svg
+                className="w-4 h-4 text-govt-navy shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                />
+              </svg>
+              <span>REMOVABLE EVIDENCE MEDIA</span>
+            </>
+          )}
+        </div>
+        <span
+          className={`px-2 py-0.5 rounded text-[10px] uppercase font-mono font-bold ${
+            isHostDrive
+              ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+              : "bg-emerald-100 text-emerald-900 border border-emerald-300"
+          }`}
+        >
+          {isHostDrive ? "PROTECTED OS" : "EVIDENCE READY"}
+        </span>
+      </div>
+
       <div className="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
         <div className="min-w-0">
           <div className="truncate font-mono text-xs font-semibold text-typeblue">
             {device.serial_number}
           </div>
-          <h3 className="mt-1 truncate font-display text-lg font-semibold text-main">
+          <h3 className="mt-1 truncate font-display text-lg font-bold text-main">
             {device.model || device.manufacturer || "Unidentified device"}
           </h3>
         </div>
@@ -89,15 +167,19 @@ export function DeviceCard({ device }: { device: DeviceOut }) {
       <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-5 py-4 text-sm">
         <div>
           <div className="fg-label">Media</div>
-          <div className="mt-1 text-main font-medium">{device.media_type.replaceAll("_", " ")}</div>
+          <div className="mt-1 text-main font-semibold">
+            {device.media_type.replaceAll("_", " ")}
+          </div>
         </div>
         <div>
           <div className="fg-label">Capacity</div>
-          <div className="mt-1 font-mono text-xs text-main">{bytesHuman(device.capacity_bytes)}</div>
+          <div className="mt-1 font-mono text-xs font-bold text-main">
+            {bytesHuman(device.capacity_bytes)}
+          </div>
         </div>
         <div>
           <div className="fg-label">Connection</div>
-          <div className="mt-1 text-main">{device.connection_type}</div>
+          <div className="mt-1 text-main font-semibold">{device.connection_type}</div>
         </div>
         <div>
           <div className="fg-label">Health</div>
@@ -106,20 +188,41 @@ export function DeviceCard({ device }: { device: DeviceOut }) {
           </div>
         </div>
       </div>
-      <div className="border-t border-line bg-field/40 px-5 py-3">
-        <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted">
-          Available operations
+      <div
+        className={`border-t px-5 py-3.5 ${
+          isHostDrive ? "bg-amber-500/5 border-amber-200" : "bg-field/40 border-line"
+        }`}
+      >
+        <div className="mb-2 flex items-center justify-between">
+          <span className="font-mono text-[10px] uppercase tracking-wider text-muted font-bold">
+            Available operations
+          </span>
+          {isHostDrive && (
+            <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1">
+              ⚠️ OS Drive Protection Active
+            </span>
+          )}
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={query("RECOVERY")} className="fg-btn !px-2.5 !py-1 text-[11px]">
+          <Link href={query("RECOVERY")} className="fg-btn !px-2.5 !py-1 text-[11px] font-bold">
             Recover
           </Link>
-          <Link href={query("FILE_ERASE")} className="fg-btn !px-2.5 !py-1 text-[11px]">
+          <Link href={query("FILE_ERASE")} className="fg-btn !px-2.5 !py-1 text-[11px] font-bold">
             Erase folder
           </Link>
-          <Link href={query("DRIVE_ERASE")} className="fg-btn-primary !px-2.5 !py-1 text-[11px]">
-            Erase drive
-          </Link>
+          {isHostDrive ? (
+            <Link
+              href={query("DRIVE_ERASE")}
+              className="px-3 py-1 text-[11px] font-bold rounded bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-400 transition-all flex items-center gap-1"
+              title="Caution: Operating system host drive"
+            >
+              🔒 Erase OS Drive (Protected)
+            </Link>
+          ) : (
+            <Link href={query("DRIVE_ERASE")} className="fg-btn-primary !px-2.5 !py-1 text-[11px] font-bold">
+              Erase drive
+            </Link>
+          )}
         </div>
       </div>
     </article>
