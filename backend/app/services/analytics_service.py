@@ -20,9 +20,23 @@ async def get_summary(db: AsyncSession) -> dict:
         recovered_files_count = sum(
             int(d.get("files_recovered", 0)) for d in recovery_records if isinstance(d, dict)
         )
-        recovered_data_size_bytes = sum(
-            int(d.get("data_size", 0)) for d in recovery_records if isinstance(d, dict)
-        )
+        recovered_data_size_bytes = 0
+        for d in recovery_records:
+            if isinstance(d, dict):
+                val = (
+                    d.get("data_size")
+                    or d.get("bytes_recovered")
+                    or d.get("data_size_bytes")
+                    or d.get("bytes_processed")
+                    or d.get("total_bytes_recovered")
+                    or d.get("total_bytes")
+                )
+                if val is not None:
+                    recovered_data_size_bytes += int(val)
+                elif "files" in d and isinstance(d["files"], list):
+                    recovered_data_size_bytes += sum(
+                        int(f.get("size", 0)) for f in d["files"] if isinstance(f, dict)
+                    )
 
         today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
         ops_today_stmt = select(func.count()).select_from(OperationRecord).where(

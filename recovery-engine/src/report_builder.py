@@ -25,6 +25,8 @@ def build_report(
             "source_hash_before": summary.source_hash_before,
             "source_hash_after": summary.source_hash_after,
             "files_recovered": summary.files_recovered,
+            "data_size": sum(r.size for r in summary.recovered_files),
+            "bytes_recovered": sum(r.size for r in summary.recovered_files),
             "avg_confidence": summary.avg_confidence,
             "classifications": summary.classifications,
             "files": [
