@@ -100,7 +100,7 @@ def _type_specific_rows(operation_type: str, details: dict) -> list[tuple[str, s
     """Returns (label, value) pairs specific to this operation type."""
     if operation_type == "DRIVE_ERASE":
         return [
-            ("Sanitization Method", str(details.get("method", "NIST SP 800-88 Clear/Purge"))),
+            ("Sanitization Method", str(details.get("method", "NIST SP 800-88 Rev. 2 Clear/Purge"))),
             ("Overwrite Passes", str(details.get("passes", "1 Pass (0x00 Overwrite)"))),
             ("Bytes Processed", str(details.get("bytes_processed", "N/A"))),
             ("Verification Passed", "YES (100% Read-back Checked)" if details.get("verification_passed", True) else "NO"),
@@ -171,7 +171,7 @@ def generate_operation_pdf(record: dict, session=None) -> bytes:
     verify_url = f"{base_url}/verify/{record['certificate_id']}"
     qr_buffer = _build_qr_image(verify_url)
 
-    header_subtitle = "Issued by PRAMAAN — NIST SP 800-88 Compliant Digital Forensics Platform"
+    header_subtitle = "Issued by PRAMAAN — NIST SP 800-88 Rev. 2 Compliant Digital Forensics Platform"
     if session is not None:
         try:
             import asyncio
