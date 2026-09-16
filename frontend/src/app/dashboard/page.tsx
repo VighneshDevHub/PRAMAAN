@@ -417,7 +417,7 @@ export default function DashboardHome() {
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-xs font-mono text-govt-gold font-bold uppercase tracking-wider">
             <span className="h-2 w-2 rounded-full bg-govt-green animate-pulse" />
-            <span>NIST SP 800-88 REV. 1 COMPLIANT · LIVE SYSTEM OPERATIONAL</span>
+            <span>NIST SP 800-88 REV. 2 COMPLIANT · LIVE SYSTEM OPERATIONAL</span>
           </div>
           <h2 className="text-xl font-bold font-display text-white">
             National Technical Research Organisation (NTRO) Forensics Hub
