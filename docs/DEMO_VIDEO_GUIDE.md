@@ -753,7 +753,7 @@ Use these exact phrases when speaking about capabilities. These protect you from
 | ❌ Don't say | ✅ Say instead |
 |---|---|
 | "We wipe drives using ATA Secure Erase" | "Our current prototype implements the sanitization workflow, operation tracking, and verification reporting. Direct ATA/NVMe hardware command integration is the next production layer." |
-| "NIST 800-88 certified" | "Our sanitization workflow follows NIST SP 800-88 Rev.1 methodology." |
+| "NIST 800-88 certified" | "Our sanitization workflow follows NIST SP 800-88 Rev. 2 methodology." |
 
 ### Ledger / Blockchain
 
@@ -814,7 +814,7 @@ Prepare these answers before the presentation.
 
 **Q: What standards does it follow?**
 
-> "Recovery follows ISO/IEC 27037:2012. Drive sanitization follows NIST SP 800-88 Rev.1. File erasure follows DoD 5220.22-M patterns. Certificates are designed for compliance with Indian Evidence Act 2023 Section 63."
+> "Recovery follows ISO/IEC 27037:2012. Drive sanitization follows NIST SP 800-88 Rev. 2. File erasure follows DoD 5220.22-M patterns. Certificates are designed for compliance with Indian Evidence Act 2023 Section 63."
 
 ---
 

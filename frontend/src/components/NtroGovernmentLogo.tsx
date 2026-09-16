@@ -574,7 +574,7 @@ export function GovernmentTopHeaderBar() {
               <div className="bg-white/5 p-3 rounded-lg border border-white/10 space-y-2 font-mono text-[11px]">
                 <div className="flex justify-between border-b border-white/10 pb-1">
                   <span className="text-white/60">Standard:</span>
-                  <span className="text-govt-gold font-bold">NIST SP 800-88 Rev. 1 Compliant</span>
+                  <span className="text-govt-gold font-bold">NIST SP 800-88 Rev. 2 Compliant</span>
                 </div>
                 <div className="flex justify-between border-b border-white/10 pb-1">
                   <span className="text-white/60">Verification:</span>

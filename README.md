@@ -358,7 +358,7 @@ PRAMAAN/
 
 | Agent | Key Libraries | Standards |
 |---|---|---|
-| `drive-eraser-agent` | httpx | NIST SP 800-88 Rev.1 |
+| `drive-eraser-agent` | httpx | NIST SP 800-88 Rev. 2 |
 | `file-folder-eraser` | httpx | DoD 5220.22-M |
 | `recovery-engine` | httpx, Pillow | ISO/IEC 27037:2012 |
 
@@ -1072,7 +1072,7 @@ All tests use file-based targets only — no real hardware required. Cross-platf
 
 | Standard | Module | How Implemented |
 |---|---|---|
-| NIST SP 800-88 Rev.1 | Drive Eraser | Clear (3-pass overwrite), Purge (ATA Secure Erase), Crypto Erase methods |
+| NIST SP 800-88 Rev. 2 | Drive Eraser | Clear (3-pass overwrite), Purge (ATA Secure Erase), Crypto Erase methods |
 | ISO/IEC 27037:2012 | Recovery Engine | Read-only evidence access, pre/post SHA-256 integrity verification |
 | Indian Evidence Act 2023 (§63) | Backend | ECDSA-signed PDF certificates, tamper-evident ledger chain |
 | DoD 5220.22-M | File Eraser | 3-pass overwrite pattern (0x00, 0xFF, random) |

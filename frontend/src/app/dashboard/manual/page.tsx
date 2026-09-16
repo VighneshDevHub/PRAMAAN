@@ -122,7 +122,7 @@ const STEP_GUIDES: StepGuide[] = [
     title: "Module 02: Selective File & Folder Sanitisation",
     badge: "Targeted Erasure",
     summary: "Perform permanent overwrite of specific sensitive files, scrub filesystem metadata, and sanitize residual free space.",
-    standards: ["NIST SP 800-88 Rev. 1 (Clear)", "DoD 5220.22-M (3-Pass / 7-Pass)"],
+    standards: ["NIST SP 800-88 Rev. 2 (Clear)", "DoD 5220.22-M (3-Pass / 7-Pass)"],
     prerequisites: [
       "Path to target files or directories.",
       "Operator authority to erase selected files.",
@@ -149,7 +149,7 @@ const STEP_GUIDES: StepGuide[] = [
     title: "Module 03: Full Media & Drive Eraser",
     badge: "Storage Sanitisation",
     summary: "Execute full-disk sanitisation across HDDs, SSDs, and NVMe media with device-aware primitives and read-back verification.",
-    standards: ["NIST SP 800-88 Rev. 1 (Clear, Purge, Crypto-Erase)", "IEEE 2883-2022"],
+    standards: ["NIST SP 800-88 Rev. 2 (Clear, Purge, Crypto-Erase)", "IEEE 2883-2022"],
     prerequisites: [
       "Target storage drive connected and unmounted.",
       "Confirm target drive serial number to prevent accidental wipe of OS drives.",
@@ -231,7 +231,7 @@ export default function UserManualPage() {
             </div>
             <div className="border-l border-white/20 pl-5 text-xs text-white/80 space-y-1 font-mono">
               <div className="font-mono text-[10px] uppercase tracking-wider text-govt-goldLight font-bold">Platform Specs</div>
-              <div>• NIST SP 800-88 Rev. 1</div>
+              <div>• NIST SP 800-88 Rev. 2</div>
               <div>• ISO 27037 Digital Evidence</div>
               <div>• ECDSA P-256 Signatures</div>
               <div>• SHA-256 Hash Chain</div>

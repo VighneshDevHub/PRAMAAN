@@ -17,7 +17,7 @@ export interface FileEraseStandardOption {
 export const FILE_ERASE_STANDARDS: FileEraseStandardOption[] = [
   {
     value: "NIST_CLEAR",
-    label: "NIST SP 800-88 Rev. 1 Clear",
+    label: "NIST SP 800-88 Rev. 2 Clear",
     badge: "Government Standard",
     passes: "1 Pass (Overwrite 0x00)",
     detail: "Single-pass logical overwrite for files, folders, and unallocated metadata structures with 100% block read-back verification.",

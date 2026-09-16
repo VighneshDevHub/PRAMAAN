@@ -2,7 +2,7 @@
 
 # PRAMAAN — Drive Eraser Agent
 
-**Python 3.12 · NIST SP 800-88 Rev.1 · Multi-platform · ECDSA-signed Certificates**
+**Python 3.12 · NIST SP 800-88 Rev. 2 · Multi-platform · ECDSA-signed Certificates**
 
 *Secure drive sanitisation CLI agent for the PRAMAAN digital forensics platform.*
 
@@ -32,7 +32,7 @@
 
 ## 1. Overview
 
-The Drive Eraser Agent sanitises physical drives and file targets according to **NIST SP 800-88 Rev.1** — the US government standard for media sanitisation. After wiping, it submits a signed operation report to the PRAMAAN backend, which issues a tamper-evident digital certificate.
+The Drive Eraser Agent sanitises physical drives and file targets according to **NIST SP 800-88 Rev. 2** — the US government standard for media sanitisation. After wiping, it submits a signed operation report to the PRAMAAN backend, which issues a tamper-evident digital certificate.
 
 ### Supported targets
 
@@ -404,7 +404,7 @@ class VerificationResult:
 
 ### NIST Clear — `wipers/clear.py`
 
-Multi-pass overwrite. Compliant with NIST SP 800-88 Rev.1 §2.4.
+Multi-pass overwrite. Compliant with NIST SP 800-88 Rev. 2 §2.4.
 
 ```
 Pass 1: write 0x00 × size_bytes  → flush (all zeros)
@@ -435,7 +435,7 @@ Requires:
 Fallback: ClearWiper used if ATA Secure Erase is not supported
 ```
 
-Compliant with NIST SP 800-88 Rev.1 §2.5 (Purge).
+Compliant with NIST SP 800-88 Rev. 2 §2.5 (Purge).
 
 ---
 
@@ -452,7 +452,7 @@ Result: all data encrypted with discarded key → permanently unrecoverable
 Duration: near-instantaneous (no data written, just key replaced)
 ```
 
-Compliant with NIST SP 800-88 Rev.1 §2.6 (Cryptographic Erase).
+Compliant with NIST SP 800-88 Rev. 2 §2.6 (Cryptographic Erase).
 
 ### Method Selection Logic
 
