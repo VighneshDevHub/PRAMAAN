@@ -375,7 +375,7 @@ const FAQS: FaqItem[] = [
     category: "hardware",
     categoryLabel: "Logical Erasure",
     q: "Can I perform targeted file sanitisation without wiping the entire physical drive?",
-    a: "Yes — the File & Folder Eraser module executes targeted logical data destruction using configurable multi-pass overwrite patterns (DoD 5220.22-M, NIST SP 800-88). It scrubs NTFS/EXT inode metadata and sanitises unallocated filesystem free-space to ensure deleted files cannot be carved or reconstructed.",
+    a: "Yes — the File & Folder Eraser module executes targeted logical data destruction using configurable multi-pass overwrite patterns (DoD 5220.22-M, NIST SP 800-88 REV. 2). It scrubs NTFS/EXT inode metadata and sanitises unallocated filesystem free-space to ensure deleted files cannot be carved or reconstructed.",
     badge: "Multi-Pass Overwrite",
     keywords: ["file", "folder", "selective", "inode", "metadata", "free-space", "targeted", "dod"],
   },

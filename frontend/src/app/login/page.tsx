@@ -166,7 +166,7 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white font-display">NIST SP 800-88 &amp; ISO 27037</h4>
+                  <h4 className="text-xs font-bold text-white font-display">NIST SP 800-88 REV. 2 &amp; ISO 27037</h4>
                   <p className="text-[11px] text-white/70 mt-0.5 font-normal">Compliant sanitisation primitives &amp; digital forensic evidence seals.</p>
                 </div>
               </div>
