@@ -582,6 +582,45 @@ export function getCertificateReportPdfUrl(certificateId: string): string {
   return `${getApiBaseUrl()}/api/v1/reports/certificates/${certificateId}/pdf`;
 }
 
+export async function openCertificatePdf(certificateId: string): Promise<void> {
+  try {
+    const baseUrl = getApiBaseUrl();
+    const token = getToken();
+    const headers = new Headers();
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+    const res = await fetch(`${baseUrl}/api/v1/reports/certificates/${certificateId}/pdf`, {
+      headers,
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to fetch PDF report (${res.status})`);
+    }
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    // Try opening in new window/tab first (works in browser & desktop wrappers)
+    const win = window.open(blobUrl, "_blank");
+    if (!win) {
+      // If popup blocked or desktop webview doesn't support target=_blank windows, trigger direct download
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `Certificate_${certificateId.slice(0, 8)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    setTimeout(() => {
+      URL.revokeObjectURL(blobUrl);
+    }, 60000);
+  } catch {
+    // Direct URL fallback
+    const directUrl = getCertificateReportPdfUrl(certificateId);
+    window.open(directUrl, "_blank");
+  }
+}
+
 export function getCertificatesCsvDownloadUrl(params?: {
   from?: string;
   to?: string;
@@ -595,6 +634,41 @@ export function getCertificatesCsvDownloadUrl(params?: {
     success: params?.success,
   });
   return `${getApiBaseUrl()}/api/v1/reports/certificates/download.csv${qs}`;
+}
+
+export async function downloadCertificatesCsv(params?: {
+  from?: string;
+  to?: string;
+  operator_email?: string;
+  success?: boolean;
+}): Promise<void> {
+  const qs = buildQuery({
+    from: params?.from,
+    to: params?.to,
+    operator_email: params?.operator_email,
+    success: params?.success,
+  });
+  const baseUrl = getApiBaseUrl();
+  const token = getToken();
+  if (!token) throw new UnauthorizedError("Not logged in");
+
+  const res = await fetch(`${baseUrl}/api/v1/reports/certificates/download.csv${qs}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to download CSV (${res.status})`);
+  }
+  const blob = await res.blob();
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = `certificates_${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
 }
 
 // --- settings ------------------------------------------------------------
