@@ -222,7 +222,7 @@ export default function DriveEraserPage() {
                   03. Select Sanitisation Profile
                 </h3>
                 <p className="mt-1 text-xs text-slate-500 font-medium">
-                  Choose a sanitisation method conforming to NIST SP 800-88 guidelines. The agent executes hardware primitives.
+                  Choose a sanitisation method conforming to NIST SP 800-88 REV. 2 guidelines. The agent executes hardware primitives.
                 </p>
               </div>
 

@@ -17,7 +17,7 @@ export const DRIVE_METHODS: MethodOption[] = [
     value: "CLEAR",
     label: "Clear (Single Pass)",
     detail: "Logical sanitization via standard zero/pattern overwrites. Overwrites user-addressable storage locations across all sector blocks.",
-    standardBadge: "NIST SP 800-88 Clear",
+    standardBadge: "NIST SP 800-88 Rev. 2 Clear",
     gradient: "from-[#051329] to-[#0B2D4D]",
     icon: (
       <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -29,7 +29,7 @@ export const DRIVE_METHODS: MethodOption[] = [
     value: "PURGE",
     label: "Purge (Firmware Erase)",
     detail: "Hardware-level sanitization using ATA Secure Erase or SCSI Sanitize. Removes data from hidden regions (HPA, DCO, and reallocated sectors).",
-    standardBadge: "NIST SP 800-88 Purge",
+    standardBadge: "NIST SP 800-88 Rev. 2 Purge",
     gradient: "from-[#0B2D4D] to-[#005BAC]",
     icon: (
       <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -41,7 +41,7 @@ export const DRIVE_METHODS: MethodOption[] = [
     value: "CRYPTO_ERASE",
     label: "Crypto-Erase (SED Key Destroy)",
     detail: "Cryptographic sanitization by destroying internal media encryption keys (MEK/KEK). Fast & secure for Self-Encrypting Drives (SED).",
-    standardBadge: "NIST SP 800-88 Cryptographic",
+    standardBadge: "NIST SP 800-88 Rev. 2 Cryptographic",
     gradient: "from-[#047857] to-[#10B981]",
     icon: (
       <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -51,7 +51,7 @@ export const DRIVE_METHODS: MethodOption[] = [
   },
   {
     value: "NIST_CLEAR",
-    label: "NIST Multi-Pass Overwrite",
+    label: "NIST SP 800-88 Rev. 2 Multi-Pass Overwrite",
     detail: "Controlled multi-pass pattern overwrite with verification read-back for certified forensic audit trails and legal evidence disposal.",
     standardBadge: "Multi-Pass Forensic Clear",
     gradient: "from-[#B8860B] to-[#D4AF37]",

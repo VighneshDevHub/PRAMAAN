@@ -180,7 +180,7 @@ export default function FileEraserPage() {
                   02. Choose Overwrite Standard &amp; Metadata Parameters
                 </h3>
                 <p className="mt-1 text-xs text-slate-500 font-medium">
-                  Select sanitisation pass profile and metadata scrubbing options per NIST SP 800-88 guidelines.
+                  Select sanitisation pass profile and metadata scrubbing options per NIST SP 800-88 REV. 2 guidelines.
                 </p>
               </div>
 
@@ -429,7 +429,7 @@ export default function FileEraserPage() {
             </p>
             <div className="pt-2 border-t border-white/15 text-[10px] font-mono text-emerald-400 font-bold flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              NIST SP 800-88 VERIFIED
+              NIST SP 800-88 REV. 2 VERIFIED
             </div>
           </div>
         </aside>
