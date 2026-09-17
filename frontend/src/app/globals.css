@@ -338,4 +338,62 @@
   animation: scanShimmer 1.8s ease-in-out infinite;
 }
 
+/* ==========================================================================
+   Google Translate Popup & Banner Suppression (GIGW / NTRO Compliance)
+   ========================================================================== */
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+iframe.goog-te-banner-frame,
+iframe[class*="goog-te"],
+iframe[id*="goog"],
+iframe[id*=":1"],
+iframe[src*="translate"],
+iframe[src*="googleapis"],
+.VIpgJd-Z44Wfd-a9vfWc-b954eb-jT52ee,
+.VIpgJd-y68f1f-yZGuWe,
+.VIpgJd-Z44Wfd-a9vfWc,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+#goog-gt- {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  z-index: -9999 !important;
+}
+
+html,
+html.translated-ltr,
+html.translated-rtl {
+  top: 0px !important;
+  margin-top: 0px !important;
+  padding-top: 0px !important;
+}
+
+body,
+body.translated-ltr,
+body.translated-rtl {
+  top: 0px !important;
+  position: static !important;
+  margin-top: 0px !important;
+  padding-top: 0px !important;
+}
+
+.goog-te-gadget-icon,
+.goog-te-menu-value span:nth-child(2),
+.goog-te-menu-value img {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
 

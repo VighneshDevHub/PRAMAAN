@@ -157,12 +157,48 @@ export function GovernmentTopHeaderBar() {
               pageLanguage: "en",
               includedLanguages: "en,hi,mr,ta,te,gu,bn,kn",
               autoDisplay: false,
+              layout: win.google.translate.TranslateElement.InlineLayout.SIMPLE,
             },
             "google_translate_element"
           );
         }
       };
     }
+  }, []);
+
+  // Active DOM suppression to kill Google Translate top banner popups
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const killBanner = () => {
+      if (document.body.style.top !== "0px") document.body.style.top = "0px";
+      if (document.documentElement.style.top !== "0px") document.documentElement.style.top = "0px";
+
+      const bannerIframes = document.querySelectorAll(
+        "iframe.goog-te-banner-frame, iframe[src*='translate'], iframe[id*='goog'], iframe[id*=':1'], .VIpgJd-Z44Wfd-a9vfWc-b954eb-jT52ee, .goog-te-banner-frame, #goog-gt-tt"
+      );
+      bannerIframes.forEach((el) => {
+        const h = el as HTMLElement;
+        h.style.setProperty("display", "none", "important");
+        h.style.setProperty("visibility", "hidden", "important");
+        h.style.setProperty("height", "0px", "important");
+        h.style.setProperty("width", "0px", "important");
+        h.style.setProperty("position", "absolute", "important");
+        h.style.setProperty("top", "-9999px", "important");
+      });
+    };
+
+    killBanner();
+    const observer = new MutationObserver(killBanner);
+    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.documentElement, { attributes: true });
+
+    const interval = setInterval(killBanner, 100);
+
+    return () => {
+      observer.disconnect();
+      clearInterval(interval);
+    };
   }, []);
 
   // Load saved preferences on mount
@@ -253,7 +289,6 @@ export function GovernmentTopHeaderBar() {
       localStorage.setItem("pramaan_lang", langCode);
     } catch {}
 
-    // Set Google Translate cookie for full webpage translation
     if (typeof window !== "undefined") {
       const domain = window.location.hostname;
       document.cookie = `googtrans=/en/${langCode}; path=/; domain=${domain}`;

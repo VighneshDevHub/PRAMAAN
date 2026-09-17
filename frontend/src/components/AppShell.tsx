@@ -564,7 +564,7 @@ export function AppShell({
                 Chain is cryptographically anchored
               </p>
               <p className="mt-1 text-xs text-muted">
-                SHA-256 · ECDSA P-256 · NIST SP 800-88
+                SHA-256 · ECDSA P-256 · NIST SP 800-88 REV. 2
               </p>
             </div>
           </div>
