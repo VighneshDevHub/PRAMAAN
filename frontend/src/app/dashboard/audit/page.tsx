@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { deleteOperation, getCertificateReportPdfUrl, listAuditReport, UnauthorizedError } from "@/lib/api";
+import { deleteOperation, getCertificateReportPdfUrl, openCertificatePdf, listAuditReport, UnauthorizedError } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import type { ReportCertificateRow } from "@/lib/types";
 import { AppShell } from "@/components/AppShell";
@@ -162,9 +162,14 @@ export default function AuditPage() {
                     <td><span className={outcome(row.success)}>{row.success ? "Verified" : "Failed"}</span></td>
                     <td className="text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <a href={getCertificateReportPdfUrl(row.certificate_id)} target="_blank" rel="noreferrer noopener" className="fg-btn-primary !px-2.5 !py-1 text-[11px]">
+                        <button
+                          type="button"
+                          onClick={() => void openCertificatePdf(row.certificate_id)}
+                          className="fg-btn-primary !px-2.5 !py-1 text-[11px]"
+                          title="View / Download PDF Certificate"
+                        >
                           PDF
-                        </a>
+                        </button>
                         <button
                           type="button"
                           onClick={() => void handleDelete(row.certificate_id)}
