@@ -63,3 +63,8 @@ temp/
 recovery-engine/recovery-output/
 frontend/tsconfig.tsbuildinfo
 build/
+# Build/cache
+frontend/tsconfig.tsbuildinfo
+
+# SQLite runtime files
+backend/*.db-journal
