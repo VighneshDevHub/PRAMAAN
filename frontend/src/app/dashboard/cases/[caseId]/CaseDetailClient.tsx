@@ -10,6 +10,7 @@ import {
   getCase,
   getCaseTimeline,
   getCertificateReportPdfUrl,
+  openCertificatePdf,
   getOperationPdfUrl,
   linkCaseOperation,
   UnauthorizedError,
@@ -471,22 +472,22 @@ export default function CaseDetailClient() {
                         </td>
                         <td className="text-right">
                           <div className="inline-flex flex-wrap justify-end gap-1.5">
-                            <a
-                              href={getCertificateReportPdfUrl(item.certificate_id)}
-                              target="_blank"
-                              rel="noreferrer noopener"
+                            <button
+                              type="button"
+                              onClick={() => void openCertificatePdf(item.certificate_id)}
                               className="fg-btn !px-2.5 !py-1 text-[11px]"
+                              title="View / Download PDF Certificate"
                             >
                               PDF
-                            </a>
-                            <a
-                              href={getOperationPdfUrl(item.certificate_id)}
-                              target="_blank"
-                              rel="noreferrer noopener"
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void openCertificatePdf(item.certificate_id)}
                               className="fg-btn !px-2.5 !py-1 text-[11px]"
+                              title="View / Download Forensic Report"
                             >
                               Report
-                            </a>
+                            </button>
                             <Link
                               href={`/verify?certificate_id=${encodeURIComponent(item.certificate_id)}`}
                               className="fg-btn-primary !px-2.5 !py-1 text-[11px]"
