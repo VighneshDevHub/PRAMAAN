@@ -24,7 +24,7 @@ import io
 import zipfile
 from PIL import Image, ImageDraw
 
-OUTPUT_FILE = "seized_drive.dd"
+OUTPUT_FILE = "evidence.dd"
 
 # ==========================================
 # CONFIGURATION
