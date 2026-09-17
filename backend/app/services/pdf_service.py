@@ -171,7 +171,7 @@ def generate_operation_pdf(record: dict, session=None) -> bytes:
     verify_url = f"{base_url}/verify/{record['certificate_id']}"
     qr_buffer = _build_qr_image(verify_url)
 
-    header_subtitle = "Issued by PRAMAAN — NIST SP 800-88 Rev. 2 Compliant Digital Forensics Platform"
+    header_subtitle = "Issued by PRAMAAN - NIST SP 800-88 REV. 2 Compliant Digital Forensics Platform"
     if session is not None:
         try:
             import asyncio

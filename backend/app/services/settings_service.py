@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.setting import Setting
 
 
-_DEFAULT_HEADER = "Issued by PRAMAAN — NIST SP 800-88 Rev. 2 Compliant Digital Forensics Platform"
+_DEFAULT_HEADER = "Issued by PRAMAAN - NIST SP 800-88 REV. 2 Compliant Digital Forensics Platform"
 
 _SETTINGS_CACHE: dict[str, Any] = {"_cached": None, "_ts": 0.0}
 
