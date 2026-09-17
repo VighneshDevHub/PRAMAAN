@@ -319,3 +319,23 @@
   --fg-line: 0 0 0;
 }
 
+/* Custom Ledger Animations */
+@keyframes flowDash {
+  0% { stroke-dashoffset: 24; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes scanShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-flow-dash {
+  animation: flowDash 2s linear infinite;
+}
+
+.animate-scan-shimmer {
+  animation: scanShimmer 1.8s ease-in-out infinite;
+}
+
+
