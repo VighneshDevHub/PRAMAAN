@@ -70,7 +70,7 @@ function VerifyLookupContent() {
                 Certificate Authenticator
               </div>
               <span className="font-mono text-[10px] text-white/70">
-                NIST SP 800-88 & ISO 27037
+                NIST SP 800-88 REV. 2 & ISO 27037
               </span>
             </div>
 

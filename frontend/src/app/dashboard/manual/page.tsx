@@ -226,7 +226,7 @@ export default function UserManualPage() {
                 Digital Forensics & Sanitisation Manual
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-white/80">
-                This manual provides official step-by-step procedures for operating the PRAMAAN platform. Follow these guidelines to maintain legal chain of custody, comply with NIST SP 800-88 & ISO 27037 standards, and ensure cryptographic auditability.
+                This manual provides official step-by-step procedures for operating the PRAMAAN platform. Follow these guidelines to maintain legal chain of custody, comply with NIST SP 800-88 REV. 2 & ISO 27037 standards, and ensure cryptographic auditability.
               </p>
             </div>
             <div className="border-l border-white/20 pl-5 text-xs text-white/80 space-y-1 font-mono">
