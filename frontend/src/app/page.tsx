@@ -408,6 +408,27 @@ const FAQS: FaqItem[] = [
   },
 ];
 
+function getYouTubeEmbedUrl(input: string): string {
+  if (!input) return "";
+  const trimmed = input.trim();
+  if (trimmed.includes("/embed/")) {
+    const clean = trimmed.split("?")[0];
+    return `${clean}?autoplay=1&rel=0`;
+  }
+  const watchMatch = trimmed.match(/[?&]v=([^&]+)/);
+  if (watchMatch) {
+    return `https://www.youtube.com/embed/${watchMatch[1]}?autoplay=1&rel=0`;
+  }
+  const shortMatch = trimmed.match(/youtu\.be\/([^?&]+)/);
+  if (shortMatch) {
+    return `https://www.youtube.com/embed/${shortMatch[1]}?autoplay=1&rel=0`;
+  }
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+    return `https://www.youtube.com/embed/${trimmed}?autoplay=1&rel=0`;
+  }
+  return trimmed;
+}
+
 // ==================================================================== page
 export default function LandingPage() {
   const [stats, setStats] = useState<PublicStatsOut | null>({
@@ -420,6 +441,24 @@ export default function LandingPage() {
   const [faqCategory, setFaqCategory] = useState<"all" | "verification" | "hardware" | "security">("all");
   const [faqSearch, setFaqSearch] = useState<string>("");
   const [openFaqId, setOpenFaqId] = useState<string | null>("FAQ-01");
+
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
+  const [demoVideoUrl, setDemoVideoUrl] = useState<string>("");
+  const [isEditingUrl, setIsEditingUrl] = useState<boolean>(false);
+  const [customUrlInput, setCustomUrlInput] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedUrl = localStorage.getItem("pramaan_demo_yt_url");
+      if (savedUrl) {
+        setDemoVideoUrl(savedUrl);
+        setCustomUrlInput(savedUrl);
+      } else if (process.env.NEXT_PUBLIC_DEMO_YOUTUBE_URL) {
+        setDemoVideoUrl(process.env.NEXT_PUBLIC_DEMO_YOUTUBE_URL);
+        setCustomUrlInput(process.env.NEXT_PUBLIC_DEMO_YOUTUBE_URL);
+      }
+    }
+  }, []);
 
   const filteredFaqs = FAQS.filter((f) => {
     const matchesCategory = faqCategory === "all" || f.category === faqCategory;
@@ -455,36 +494,46 @@ export default function LandingPage() {
           <Link href="/" className="inline-flex items-center gap-3 shrink-0">
             <NtroGovernmentLogo variant="header" showSubtitle={true} />
           </Link>
-          <nav className="hidden items-center justify-center gap-6 xl:gap-8 lg:flex text-xs xl:text-sm font-semibold flex-1 px-4">
+          <nav className="hidden items-center justify-center gap-4 xl:gap-6 lg:flex text-xs xl:text-sm font-semibold flex-1 px-2">
             <a href="#features" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">Features</a>
-            <a href="#architecture" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">Architecture</a>
             <a href="#standards" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">Standards</a>
             <a href="#workflow" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">Workflow</a>
             <a href="#faq" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">FAQ</a>
             <Link href="/dashboard/manual" className="text-main/90 hover:text-govt-navy transition-colors whitespace-nowrap">User Manual</Link>
+            <button
+              onClick={() => setIsVideoModalOpen(true)}
+              className="inline-flex items-center gap-1.5 text-red-600 hover:text-red-700 font-bold transition-colors whitespace-nowrap cursor-pointer bg-red-50 hover:bg-red-100 border border-red-200/80 px-2.5 py-1 rounded-md"
+              title="Watch PRAMAAN Prototype Demo Video on YouTube"
+            >
+              <svg className="w-3.5 h-3.5 fill-current text-red-600" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span>Watch Demo</span>
+            </button>
           </nav>
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <a
               href="/downloads/PRAMAAN_Desktop_Setup.exe"
               download
-              className="inline-flex items-center gap-1.5 rounded-md border border-govt-gold/60 bg-govt-goldLight px-3 py-1.5 text-xs font-bold text-govt-navy hover:bg-govt-goldDark hover:text-white transition-colors shadow-2xs whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 rounded-md border border-govt-gold/60 bg-govt-goldLight px-2.5 py-1.5 text-xs font-bold text-govt-navy hover:bg-govt-goldDark hover:text-white transition-colors shadow-2xs whitespace-nowrap"
               title="Download PRAMAAN Native Desktop App (.exe)"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              <span>Download Desktop App</span>
+              <span className="hidden xl:inline">Download Desktop App</span>
+              <span className="xl:hidden">Desktop App</span>
             </a>
             <Link
               href="/verify"
-              className="inline-flex items-center gap-1.5 rounded-md border border-line bg-white hover:bg-field px-3 py-1.5 text-xs font-semibold text-govt-navy transition-colors shadow-2xs whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 rounded-md border border-line bg-white hover:bg-field px-2.5 py-1.5 text-xs font-semibold text-govt-navy transition-colors shadow-2xs whitespace-nowrap"
             >
               <svg className="w-3.5 h-3.5 text-govt-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
               <span>Verify</span>
             </Link>
-            <Link href="/login" className="fg-btn-primary !py-1.5 !px-3.5 text-xs whitespace-nowrap">
+            <Link href="/login" className="fg-btn-primary !py-1.5 !px-3 text-xs whitespace-nowrap">
               Operator Sign In
             </Link>
           </div>
@@ -516,12 +565,28 @@ export default function LandingPage() {
         {/* Hero Main Content Area */}
         <div className="relative mx-auto max-w-[1440px] px-5 pt-8 pb-10 md:px-8 lg:px-12 md:pt-12 md:pb-14 w-full flex-1 flex flex-col justify-center">
           <div className="max-w-xl lg:max-w-2xl">
-            {/* Government Mandate Badge */}
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-govt-gold/60 bg-govt-goldLight/90 px-4 py-1.5 shadow-xs backdrop-blur-xs">
-              <span className="inline-block h-2 w-2 rounded-full bg-govt-goldDark animate-pulse" />
-              <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-govt-navy">
-                GOVT OF INDIA · NTRO · PROBLEM STATEMENT ID 26149
-              </span>
+            {/* Government Mandate Badge & Watch Video Demo Button */}
+            <div className="mb-5 flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-2 rounded-full border border-govt-gold/60 bg-govt-goldLight/90 px-4 py-1.5 shadow-xs backdrop-blur-xs">
+                <span className="inline-block h-2 w-2 rounded-full bg-govt-goldDark animate-pulse" />
+                <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-govt-navy">
+                  GOVT OF INDIA · NTRO · PROBLEM STATEMENT ID 26149
+                </span>
+              </div>
+              <button
+                onClick={() => setIsVideoModalOpen(true)}
+                className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-600 hover:bg-red-700 text-white px-3.5 py-1 text-[11px] font-bold shadow-xs transition-all hover:scale-105 cursor-pointer"
+                title="Watch PRAMAAN Prototype Demo Video on YouTube"
+              >
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                </span>
+                <svg className="w-3 h-3 fill-current text-white" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                <span>Watch Video Demo</span>
+              </button>
             </div>
 
             {/* PRAMAAN Brand Header */}
@@ -552,8 +617,8 @@ export default function LandingPage() {
               <span className="bg-govt-goldLight text-govt-navy px-2.5 py-1 rounded border border-govt-gold/40 font-bold">ECDSA P-256 ANCHORED</span>
             </div>
 
-            {/* Call to Action Buttons - 3 Buttons Strictly in One Line */}
-            <div className="mt-8 flex items-center gap-3 md:gap-4 overflow-x-auto no-scrollbar whitespace-nowrap">
+            {/* Call to Action Buttons - Clean Responsive Flex Layout */}
+            <div className="mt-8 flex flex-wrap items-center gap-3 md:gap-4">
               <Link
                 href="/login"
                 className="inline-flex items-center gap-2 rounded-lg bg-govt-navy hover:bg-govt-blueDark text-white font-bold px-5 py-3 text-sm transition-all shadow-md hover:shadow-lg hover:scale-[1.01] shrink-0"
@@ -1774,6 +1839,151 @@ export default function LandingPage() {
           <span>Restricted · Authorised Use Only · Audit Logged</span>
         </div>
       </footer>
+
+      {/* ========================================================== DEMO VIDEO MODAL */}
+      {isVideoModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setIsVideoModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl overflow-hidden rounded-2xl bg-govt-navy border border-white/20 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-white/10 px-6 py-4 bg-slate-900/90">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-600/20 text-red-500 border border-red-500/30">
+                  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
+                    <span>PRAMAAN Platform Walkthrough</span>
+                    <span className="rounded bg-red-600 px-2 py-0.5 text-[10px] font-extrabold uppercase text-white tracking-wide">
+                      YouTube Demo
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-400 font-mono">
+                    Problem ID 26149 · NTRO · Prototype Demo Video
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsEditingUrl(!isEditingUrl)}
+                  className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/20 hover:text-white transition-colors cursor-pointer"
+                  title="Configure YouTube Video Link"
+                >
+                  {isEditingUrl ? "Close Config" : "⚙ Set YouTube Link"}
+                </button>
+                <button
+                  onClick={() => setIsVideoModalOpen(false)}
+                  className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                  aria-label="Close modal"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Optional URL Config Box */}
+            {isEditingUrl && (
+              <div className="border-b border-white/10 bg-slate-800/95 p-4">
+                <label className="block text-xs font-mono font-semibold text-amber-400 mb-1.5">
+                  PASTE YOUR YOUTUBE VIDEO LINK OR VIDEO ID:
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={customUrlInput}
+                    onChange={(e) => setCustomUrlInput(e.target.value)}
+                    placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                    className="flex-1 rounded-lg border border-slate-600 bg-slate-900 px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-govt-blue focus:outline-none font-mono"
+                  />
+                  <button
+                    onClick={() => {
+                      const clean = customUrlInput.trim();
+                      setDemoVideoUrl(clean);
+                      if (typeof window !== "undefined") {
+                        localStorage.setItem("pramaan_demo_yt_url", clean);
+                      }
+                      setIsEditingUrl(false);
+                    }}
+                    className="rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-xs font-bold text-white transition-colors shadow-sm cursor-pointer"
+                  >
+                    Save Link
+                  </button>
+                </div>
+                <p className="mt-1.5 text-[11px] text-slate-400 font-mono">
+                  Tip: You can paste any full YouTube URL, short link (youtu.be), or 11-character Video ID.
+                </p>
+              </div>
+            )}
+
+            {/* Video Iframe Container */}
+            <div className="relative aspect-video w-full bg-black">
+              {demoVideoUrl ? (
+                <iframe
+                  src={getYouTubeEmbedUrl(demoVideoUrl)}
+                  title="PRAMAAN Prototype Demo Video"
+                  className="h-full w-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center p-8 text-center bg-slate-950">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-600/20 text-red-500 mb-4 border border-red-500/30">
+                    <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                  <h4 className="font-display text-xl font-bold text-white mb-2">
+                    YouTube Demo Video Showcase
+                  </h4>
+                  <p className="max-w-md text-xs text-slate-400 leading-relaxed mb-6 font-mono">
+                    Click below to paste your uploaded YouTube video link or ID so visitors can watch the full demo directly here.
+                  </p>
+                  <button
+                    onClick={() => setIsEditingUrl(true)}
+                    className="inline-flex items-center gap-2 rounded-xl bg-red-600 hover:bg-red-500 px-6 py-3 text-xs font-bold text-white shadow-lg transition-all cursor-pointer"
+                  >
+                    <span>Set YouTube Video Link</span>
+                    <span className="text-sm">→</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-6 py-3 bg-slate-900/90 text-xs">
+              <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Official NTRO SIH 2026 Submission Demo</span>
+              </div>
+              {demoVideoUrl && (
+                <div className="flex items-center gap-3">
+                  <a
+                    href={demoVideoUrl.startsWith("http") ? demoVideoUrl : `https://www.youtube.com/watch?v=${demoVideoUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-slate-300 hover:text-white text-xs font-medium underline underline-offset-4"
+                  >
+                    <span>Watch directly on YouTube</span>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
