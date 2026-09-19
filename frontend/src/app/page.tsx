@@ -443,22 +443,7 @@ export default function LandingPage() {
   const [openFaqId, setOpenFaqId] = useState<string | null>("FAQ-01");
 
   const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
-  const [demoVideoUrl, setDemoVideoUrl] = useState<string>("");
-  const [isEditingUrl, setIsEditingUrl] = useState<boolean>(false);
-  const [customUrlInput, setCustomUrlInput] = useState<string>("");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedUrl = localStorage.getItem("pramaan_demo_yt_url");
-      if (savedUrl) {
-        setDemoVideoUrl(savedUrl);
-        setCustomUrlInput(savedUrl);
-      } else if (process.env.NEXT_PUBLIC_DEMO_YOUTUBE_URL) {
-        setDemoVideoUrl(process.env.NEXT_PUBLIC_DEMO_YOUTUBE_URL);
-        setCustomUrlInput(process.env.NEXT_PUBLIC_DEMO_YOUTUBE_URL);
-      }
-    }
-  }, []);
+  const DEMO_YOUTUBE_URL = "https://youtu.be/JqpdL-7l4_U";
 
   const filteredFaqs = FAQS.filter((f) => {
     const matchesCategory = faqCategory === "all" || f.category === faqCategory;
@@ -1871,92 +1856,26 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setIsEditingUrl(!isEditingUrl)}
-                  className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/20 hover:text-white transition-colors cursor-pointer"
-                  title="Configure YouTube Video Link"
-                >
-                  {isEditingUrl ? "Close Config" : "⚙ Set YouTube Link"}
-                </button>
-                <button
-                  onClick={() => setIsVideoModalOpen(false)}
-                  className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
-                  aria-label="Close modal"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+              <button
+                onClick={() => setIsVideoModalOpen(false)}
+                className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                aria-label="Close modal"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-
-            {/* Optional URL Config Box */}
-            {isEditingUrl && (
-              <div className="border-b border-white/10 bg-slate-800/95 p-4">
-                <label className="block text-xs font-mono font-semibold text-amber-400 mb-1.5">
-                  PASTE YOUR YOUTUBE VIDEO LINK OR VIDEO ID:
-                </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={customUrlInput}
-                    onChange={(e) => setCustomUrlInput(e.target.value)}
-                    placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/..."
-                    className="flex-1 rounded-lg border border-slate-600 bg-slate-900 px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-govt-blue focus:outline-none font-mono"
-                  />
-                  <button
-                    onClick={() => {
-                      const clean = customUrlInput.trim();
-                      setDemoVideoUrl(clean);
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("pramaan_demo_yt_url", clean);
-                      }
-                      setIsEditingUrl(false);
-                    }}
-                    className="rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-xs font-bold text-white transition-colors shadow-sm cursor-pointer"
-                  >
-                    Save Link
-                  </button>
-                </div>
-                <p className="mt-1.5 text-[11px] text-slate-400 font-mono">
-                  Tip: You can paste any full YouTube URL, short link (youtu.be), or 11-character Video ID.
-                </p>
-              </div>
-            )}
 
             {/* Video Iframe Container */}
             <div className="relative aspect-video w-full bg-black">
-              {demoVideoUrl ? (
-                <iframe
-                  src={getYouTubeEmbedUrl(demoVideoUrl)}
-                  title="PRAMAAN Prototype Demo Video"
-                  className="h-full w-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center p-8 text-center bg-slate-950">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-600/20 text-red-500 mb-4 border border-red-500/30">
-                    <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
-                  <h4 className="font-display text-xl font-bold text-white mb-2">
-                    YouTube Demo Video Showcase
-                  </h4>
-                  <p className="max-w-md text-xs text-slate-400 leading-relaxed mb-6 font-mono">
-                    Click below to paste your uploaded YouTube video link or ID so visitors can watch the full demo directly here.
-                  </p>
-                  <button
-                    onClick={() => setIsEditingUrl(true)}
-                    className="inline-flex items-center gap-2 rounded-xl bg-red-600 hover:bg-red-500 px-6 py-3 text-xs font-bold text-white shadow-lg transition-all cursor-pointer"
-                  >
-                    <span>Set YouTube Video Link</span>
-                    <span className="text-sm">→</span>
-                  </button>
-                </div>
-              )}
+              <iframe
+                src={getYouTubeEmbedUrl(DEMO_YOUTUBE_URL)}
+                title="PRAMAAN Prototype Demo Video"
+                className="h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
             </div>
 
             {/* Modal Footer */}
@@ -1965,21 +1884,17 @@ export default function LandingPage() {
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span>Official NTRO SIH 2026 Submission Demo</span>
               </div>
-              {demoVideoUrl && (
-                <div className="flex items-center gap-3">
-                  <a
-                    href={demoVideoUrl.startsWith("http") ? demoVideoUrl : `https://www.youtube.com/watch?v=${demoVideoUrl}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-slate-300 hover:text-white text-xs font-medium underline underline-offset-4"
-                  >
-                    <span>Watch directly on YouTube</span>
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                </div>
-              )}
+              <a
+                href={DEMO_YOUTUBE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-slate-300 hover:text-white text-xs font-medium underline underline-offset-4"
+              >
+                <span>Watch directly on YouTube</span>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
             </div>
           </div>
         </div>
